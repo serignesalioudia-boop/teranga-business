@@ -87,7 +87,7 @@ Idempotent (upserts sur les clés uniques). Données fictives :
 - 5 utilisateurs (1 admin, 2 vendeurs, 2 clients) — `passwordHash` **placeholder** (remplacé par bcrypt en Phase 4)
 - 2 vendeurs actifs + 2 boutiques avec réseaux sociaux
 - 16 catégories (7 parents + 9 enfants)
-- 6 produits (publions et 1 brouillon) + 12 médias placeholders
+- 6 produits (5 publiés + 1 brouillon) + 12 médias placeholders
 - 2 adresses, 4 règles de livraison (global + plateforme Dakar + 2 vendeurs), 2 coupons, 5 réglages
 
 Exécution : `npm run db:seed` (via `tsx prisma/seed.ts`).

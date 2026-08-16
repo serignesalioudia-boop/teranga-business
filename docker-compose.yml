@@ -4,7 +4,7 @@ services:
     container_name: teranga-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-teranga}
+      POSTGRES_USER: ${POSTGRES_USER:-teranga_business}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-teranga_dev_password}
       POSTGRES_DB: ${POSTGRES_DB:-teranga_business}
     ports:
@@ -21,8 +21,12 @@ services:
     image: adminer:4.8.1
     container_name: teranga-adminer
     restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: db
     ports:
       - "8080:8080"
+    volumes:
+      - ./docker/adminer-plugins-enabled:/var/www/html/plugins-enabled:ro
     depends_on:
       db:
         condition: service_healthy
