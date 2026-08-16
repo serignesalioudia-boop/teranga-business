@@ -7,7 +7,7 @@ Index de la documentation du projet. Chaque document est produit au fil des phas
 | Document | Sujet | Statut |
 |---|---|---|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Architecture technique (référence V2) | Initial |
-| DATABASE.md | Schéma Prisma, relations, index, règles d'intégrité | À rédiger (Phase 3) |
+| [DATABASE.md](./DATABASE.md) | Schéma Prisma, relations, index, règles d'intégrité | **Rédigé (Phase 3)** |
 | API.md | Routes API et Server Actions | À rédiger |
 | SECURITY.md | Stratégie de sécurité | À rédiger |
 | RESPONSIVE.md | Stratégie desktop / tablette / mobile | À rédiger |
