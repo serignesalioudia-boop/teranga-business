@@ -47,8 +47,7 @@ export function LoginForm({
     }
 
     setPending(false);
-    router.push(callbackUrl ?? "/");
-    router.refresh();
+    window.location.href = callbackUrl ?? "/";
   }
 
   return (

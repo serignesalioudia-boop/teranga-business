@@ -46,10 +46,9 @@ export async function loginAction(email: string, password: string) {
     });
 
     const isProd = process.env.NODE_ENV === "production";
-    const cookieName = isProd ? "__Secure-next-auth.session-token" : "next-auth.session-token";
-
     const cookieStore = await cookies();
-    cookieStore.set(cookieName, token, {
+
+    cookieStore.set("next-auth.session-token", token, {
       httpOnly: true,
       secure: isProd,
       sameSite: "lax",
@@ -57,15 +56,13 @@ export async function loginAction(email: string, password: string) {
       maxAge: 7 * 24 * 60 * 60,
     });
 
-    if (!isProd) {
-      cookieStore.set("__Secure-next-auth.session-token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60,
-      });
-    }
+    cookieStore.set("__Secure-next-auth.session-token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+    });
 
     return { ok: true };
   } catch (err: unknown) {
