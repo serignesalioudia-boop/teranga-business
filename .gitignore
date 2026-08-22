@@ -57,3 +57,10 @@ dev-output.log
 colonne
 Microsoft.PowerShell.Commands.WebRequestSession
 .github/workflows/ci.yml
+.codex/
+LOGO/
+SITE VENDEUR/
+check-columns.ts
+check-tables.sql
+check-users.sql
+check.sql
