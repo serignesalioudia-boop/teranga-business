@@ -18,7 +18,7 @@ Schéma source : `prisma/schema.prisma` · Client généré : `src/generated/pri
 |---|---|
 | `Category` | Catégories globales, hiérarchiques (`parentId`). Slug unique. |
 | `Product` | Appartient à une `Store` et une `Category`. Prix en `BigInt` minor units, `currency` (XOF). Statut `DRAFT/PUBLISHED/ARCHIVED`. Agrégats `ratingAvg/ratingCount/soldCount`. |
-| `MediaAsset` | Images/vidéos d'un produit ou d'une boutique (placeholder → Cloudinary en Phase 5). |
+| `MediaAsset` | Images/vidéos d'un produit ou d'une boutique. Depuis la Phase 5 : upload Cloudinary (`publicId` + `url` CDN), placeholders de démo conservés. |
 
 ### Panier
 | Modèle | Rôle |
@@ -84,7 +84,7 @@ L'admin contrôle les règles plateforme/global ; le vendeur gère ses propres r
 
 Idempotent (upserts sur les clés uniques). Données fictives :
 
-- 5 utilisateurs (1 admin, 2 vendeurs, 2 clients) — `passwordHash` **placeholder** (remplacé par bcrypt en Phase 4)
+- 5 utilisateurs (1 admin, 2 vendeurs, 2 clients) — `passwordHash` en bcrypt (coût 12), mot de passe démo `admin`
 - 2 vendeurs actifs + 2 boutiques avec réseaux sociaux
 - 16 catégories (7 parents + 9 enfants)
 - 6 produits (5 publiés + 1 brouillon) + 12 médias placeholders

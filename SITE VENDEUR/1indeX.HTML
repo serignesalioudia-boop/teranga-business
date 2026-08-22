@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Boutique</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="thies-market.css">
+    <link rel="icon" href="logo/logo.jpg" type="image/jpeg">
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="header">
+    <div class="container header-inner">
+        <div class="logo">
+            <a href="#" onclick="showPage('accueil')">
+                <img class="logo-img" src="logo/logo.jpg" alt="Logo de la boutique">
+                <span class="logo-text">Ma <span class="logo-highlight">Boutique</span></span>
+            </a>
+        </div>
+        <nav class="nav-main" id="navMain">
+            <ul>
+                <li><a href="#" onclick="showPage('accueil')" class="active" data-page="accueil"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="#" onclick="showPage('produits')" data-page="produits"><i class="fas fa-box"></i> Produits</a></li>
+                <li><a href="#" onclick="showPage('panier')" data-page="panier"><i class="fas fa-shopping-cart"></i> Panier <span class="cart-count" id="cartCountNav">0</span></a></li>
+            </ul>
+        </nav>
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+    </div>
+</header>
+
+<!-- ========== NOTIFICATION ========== -->
+<div id="notification" class="notification"><i class="fas fa-check-circle"></i> <span id="notifMsg">Ajouté</span></div>
+
+<!-- ========== PAGES ========== -->
+<main>
+
+<!-- PAGE ACCUEIL -->
+<section id="page-accueil" class="page active">
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-content">
+                <div class="hero-badge"><h2><i class="fas fa-store-alt"></i> Bienvenue dans votre boutique</h2></div>
+                <h1>Votre boutique de <br/> <span class="highlight">produits</span></h1>
+                <p>Découvrez une sélection de produits de qualité. Paiement sécurisé par Wave et Orange Money.</p>
+                <div class="hero-actions">
+                    <a href="#" onclick="showPage('produits')" class="btn btn-primary btn-lg"><i class="fas fa-shopping-bag"></i> Commander</a>
+                    <a href="#categories" class="btn btn-outline btn-lg"><i class="fas fa-th-large"></i> Catégories</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat"><span class="stat-number" id="statTotalProduits">0</span><span class="stat-label">Produits</span></div>
+                    <div class="stat"><span class="stat-number">1 200+</span><span class="stat-label">Clients</span></div>
+                    <div class="stat"><span class="stat-number">100%</span><span class="stat-label">Sécurisé</span></div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-logo-showcase"><img src="logo/logo.jpg" alt="Logo de la boutique"></div>
+                <div class="floating-card card-1"><i class="fas fa-tag"></i><span>Catégorie 1</span></div>
+                <div class="floating-card card-2"><i class="fas fa-tag"></i><span>Catégorie 2</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories" id="categories">
+        <div class="container">
+            <div class="section-header"><h2>Nos catégories</h2><p>Explorez nos rayons</p></div>
+            <div class="categories-grid" id="categoriesGrid"></div>
+        </div>
+    </section>
+
+    <section class="featured-products">
+        <div class="container">
+            <div class="section-header">
+                <h2>Produits vedettes</h2>
+                <a href="#" onclick="showPage('produits')" class="view-all">Voir tout <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="products-grid" id="featuredProducts"></div>
+        </div>
+    </section>
+
+    <section class="payment-banner">
+        <div class="container payment-banner-inner">
+            <div class="payment-banner-content">
+                <h2><i class="fas fa-lock"></i> Paiement sécurisé</h2>
+                <p>Acceptez <strong>Wave</strong>, <strong>Orange Money</strong> et le <strong>paiement à la livraison</strong>.</p>
+                <div class="payment-methods">
+                    <span class="payment-method"><i class="fas fa-mobile-alt"></i> Wave</span>
+                    <span class="payment-method"><i class="fas fa-phone-alt"></i> Orange Money</span>
+                    <span class="payment-method"><i class="fas fa-truck"></i> Paiement à la livraison</span>
+                </div>
+            </div>
+            <div class="payment-banner-qr payment-qr-grid" aria-label="Codes QR de paiement">
+                <figure class="payment-qr-card">
+                    <img src="image/Wave.png" alt="QR Code Wave">
+                    <figcaption><i class="fas fa-mobile-alt"></i> Wave</figcaption>
+                </figure>
+                <figure class="payment-qr-card">
+                    <img src="image/orangemoney.jpg" alt="QR Code Orange Money">
+                    <figcaption><i class="fas fa-phone-alt"></i> Orange Money</figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+</section>
+
+<!-- PAGE PRODUITS -->
+<section id="page-produits" class="page">
+    <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin:30px 0;">
+            <h1>Nos produits</h1>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="searchInput" placeholder="Rechercher...">
+                <button class="btn btn-primary" onclick="filterProducts()"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+        <div id="flashProduits" class="flash" style="display:none;"></div>
+        <div class="products-grid" id="allProducts"></div>
+    </div>
+</section>
+
+<!-- PAGE DÉTAIL PRODUIT -->
+<section id="page-produit" class="page">
+    <div class="container">
+        <div class="product-detail" id="productDetail"></div>
+    </div>
+</section>
+
+<!-- PAGE PANIER -->
+<section id="page-panier" class="page">
+    <div class="container">
+        <h1>Mon panier</h1>
+        <div id="flashPanier" class="flash" style="display:none;"></div>
+        <div id="panierContent"></div>
+    </div>
+</section>
+
+<!-- PAGE PAIEMENT -->
+<section id="page-paiement" class="page">
+    <div class="container paiement-container">
+        <h1>Passer à la caisse</h1>
+        <div id="flashPaiement" class="flash" style="display:none;"></div>
+        <div class="paiement-grid">
+            <div class="paiement-resume" id="paiementResume"></div>
+            <div class="paiement-form">
+                <h2>Mode de paiement</h2>
+                <form id="paiementForm" onsubmit="return confirmerPaiement(event)">
+                    <div class="form-group">
+                        <label>Nom et prénom</label>
+                        <textarea name="nom_prenom" id="nomPrenom" required placeholder="Ex: SALIOU DIA"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Adresse de livraison</label>
+                        <textarea name="adresse" id="adresseLivraison" required placeholder="Ex: Ville, Quartier, point de repère"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact</label>
+                        <textarea name="numero" id="numeroTelephone" required placeholder="Ex: +221 76 514 99 10"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Choisissez votre mode de paiement</label>
+                        <div class="payment-options">
+                            <label class="payment-option"><input type="radio" name="mode_paiement" value="wave" required> <span><i class="fas fa-mobile-alt"></i> Wave</span></label>
+                            <label class="payment-option"><input type="radio" name="mode_paiement" value="orange_money" required> <span><i class="fas fa-phone-alt"></i> Orange Money</span></label>
+                            <label class="payment-option"><input type="radio" name="mode_paiement" value="livraison" required> <span><i class="fas fa-truck"></i> Paiement à la livraison</span></label>
+                        </div>
+                    </div>
+                    <div class="checkout-qrs" aria-label="Codes QR de paiement">
+                        <figure class="payment-qr-card">
+                            <img src="image/Wave.png" alt="QR Code Wave">
+                            <figcaption><i class="fas fa-mobile-alt"></i> Wave</figcaption>
+                        </figure>
+                        <figure class="payment-qr-card">
+                            <img src="image/orangemoney.jpg" alt="QR Code Orange Money">
+                            <figcaption><i class="fas fa-phone-alt"></i> Orange Money</figcaption>
+                        </figure>
+                    </div>
+                    <div class="checkout-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">Confirmer la commande</button>
+                        <div class="whatsapp-checkout">
+                            <span class="whatsapp-checkout-label">Passer la commande sur WhatsApp</span>
+                            <a href="https://wa.me/VOTRE_NUMERO" class="whatsapp-order-link" onclick="return ouvrirCommandeWhatsApp(event)" title="Commander sur WhatsApp" aria-label="Commander sur WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PAGE CONFIRMATION -->
+<section id="page-confirmation" class="page">
+    <div class="container confirmation">
+        <h1>Commande confirmée</h1>
+        <p>Merci pour votre commande !</p>
+        <p>Numéro : <strong>#<span id="confirmationId">001234</span></strong></p>
+        <p>Total : <span id="confirmationTotal">0</span> FCFA</p>
+        <p>Paiement : <span id="confirmationMode">Wave</span></p>
+        <p>Adresse : <span id="confirmationAdresse">Dakar</span></p>
+        <p>Statut : <span id="confirmationStatut">confirmée</span></p>
+        <a href="#" onclick="showPage('accueil')" class="btn btn-primary">Retour à l'accueil</a>
+    </div>
+</section>
+
+<!-- Pages de connexion/inscription supprimées — gérées par la plateforme -->
+
+<!-- PAGE COMPTE -->
+<section id="page-compte" class="page">
+    <div class="container">
+        <h1>Bonjour, <span id="userName">Client</span></h1>
+        <h2>Mes commandes</h2>
+        <div id="historiqueCommandes"></div>
+        <p><a href="#" onclick="deconnexion()">Se déconnecter</a></p>
+    </div>
+</section>
+
+<!-- PAGE ADMIN DASHBOARD -->
+<section id="page-admin_dashboard" class="page">
+    <div class="container admin-dashboard">
+        <h1>Tableau de bord</h1>
+        <div id="flashAdmin" class="flash" style="display:none;"></div>
+        <div class="stats-grid">
+            <div class="stat-card"><h3>Produits</h3><p id="statProduits">0</p></div>
+            <div class="stat-card"><h3>Commandes</h3><p id="statCommandes">0</p></div>
+            <div class="stat-card"><h3>Clients</h3><p id="statClients">0</p></div>
+        </div>
+        <div class="admin-links">
+            <a href="#" onclick="showPage('admin_produits')" class="btn btn-primary">Gérer produits</a>
+            <a href="#" onclick="showPage('admin_commandes')" class="btn btn-primary">Gérer commandes</a>
+            <a href="#" onclick="showPage('admin_ajouter')" class="btn btn-success">Ajouter produit</a>
+        </div>
+    </div>
+</section>
+
+<!-- PAGE ADMIN PRODUITS -->
+<section id="page-admin_produits" class="page">
+    <div class="container">
+        <h1>Gestion produits</h1>
+        <div id="flashAdminProduits" class="flash" style="display:none;"></div>
+        <div id="socialSharePanel" class="social-share-panel" style="display:none;"></div>
+        <a href="#" onclick="showPage('admin_ajouter')" class="btn btn-success">Ajouter un produit</a>
+        <table class="table-admin">
+            <thead><tr><th>ID</th><th>Nom</th><th>Prix</th><th>Stock</th><th>Catégorie</th><th>Actions</th></tr></thead>
+            <tbody id="adminProduitsTable"></tbody>
+        </table>
+    </div>
+</section>
+
+<!-- PAGE ADMIN AJOUTER (avec upload d'image) -->
+<section id="page-admin_ajouter" class="page">
+    <div class="container">
+        <h1 id="adminAjouterTitle">Ajouter un produit</h1>
+        <div id="flashAdminAjouter" class="flash" style="display:none;"></div>
+        <form id="adminProduitForm" onsubmit="return adminSubmitProduit(event)">
+            <input type="hidden" id="editProduitId" value="">
+            <div class="form-group">
+                <label>Nom</label>
+                <input type="text" id="prodNom" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="prodDescription"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Prix (FCFA)</label>
+                <input type="number" step="0.01" id="prodPrix" required>
+            </div>
+            <div class="form-group">
+                <label>Catégorie</label>
+                <select id="prodCategorie"></select>
+            </div>
+            <div class="form-group">
+                <label>Stock</label>
+                <input type="number" id="prodStock" value="0">
+            </div>
+            <div class="form-group">
+                <label>Image du produit</label>
+                <input type="file" id="prodImageFile" accept="image/*">
+                <div class="image-preview" id="imagePreview"><img id="previewImg" src="" alt="Aperçu"></div>
+                <small>Choisissez une image depuis votre ordinateur (JPG, PNG, GIF).</small>
+            </div>
+            <button type="submit" class="btn btn-primary" id="adminProduitSubmitBtn">Ajouter</button>
+            <a href="#" onclick="showPage('admin_produits')" class="btn btn-outline">Annuler</a>
+        </form>
+    </div>
+</section>
+
+<!-- PAGE ADMIN COMMANDES -->
+<section id="page-admin_commandes" class="page">
+    <div class="container">
+        <h1>Gestion commandes</h1>
+        <div id="flashAdminCommandes" class="flash" style="display:none;"></div>
+        <div class="table-scroll">
+            <table class="table-admin">
+                <thead><tr><th>ID</th><th>Client</th><th>Nom</th><th>Adresse de livraison</th><th>Téléphone</th><th>Date</th><th>Total</th><th>Statut</th><th>Paiement</th><th>Action</th></tr></thead>
+                <tbody id="adminCommandesTable"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="footer-logo"><img class="footer-logo-img" src="logo/logo.jpg" alt="Logo de la boutique"> Ma <span>Boutique</span></div>
+                <p>Votre boutique en ligne.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col"><h4>Liens</h4><ul><li><a href="#" onclick="showPage('accueil')">Accueil</a></li><li><a href="#" onclick="showPage('produits')">Produits</a></li><li><a href="#" onclick="showPage('panier')">Panier</a></li></ul></div>
+            <div class="footer-col"><h4>Contact</h4><ul class="footer-contact"><li><i class="fas fa-map-marker-alt"></i> Dakar, Sénégal</li><li><i class="fas fa-phone"></i> +221 7X XXX XX XX</li><li><i class="fas fa-envelope"></i> contact@votreboutique.sn</li></ul></div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2026 Ma Boutique. Tous droits réservés.</p></div>
+    </div>
+</footer>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script src="thies-market.js" defer></script>
+</body>
+</html>

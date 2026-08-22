@@ -42,3 +42,17 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+.vercel
+
+# logs
+*.log
+server-output.txt
+dev-output.log
+
+# tokens / secrets
+.gh-token
+
+# misc
+colonne
+Microsoft.PowerShell.Commands.WebRequestSession

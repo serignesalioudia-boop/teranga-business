@@ -1,9 +1,16 @@
 import type { NextConfig } from "next";
-import path from "node:path";
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: path.join(__dirname),
+  output: "standalone",
+  allowedDevOrigins: ["172.25.32.1", "localhost", "127.0.0.1"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+    ],
   },
 };
 

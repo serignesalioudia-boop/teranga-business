@@ -62,7 +62,6 @@ enum SubOrderStatus {
 enum PaymentMethod {
   WAVE
   ORANGE_MONEY
-  CARD
   COD
 }
 
@@ -76,6 +75,8 @@ enum PaymentStatus {
 
 enum RefundStatus {
   PENDING
+  APPROVED
+  REJECTED
   PROCESSED
   FAILED
 }
@@ -123,12 +124,27 @@ enum NotificationType {
   PAYMENT
   DELIVERY
   SYSTEM
-  PROMO
 }
 
 enum MediaType {
   IMAGE
   VIDEO
+}
+
+enum StoreTheme {
+  BANNER
+  SIDEBAR
+  EDITORIAL
+  GALLERY
+  SHOWCASE
+  MOSAIC
+}
+
+enum SellerPlan {
+  FREE
+  ESSENTIAL
+  PRO
+  CREATOR
 }
 
 // ============================================================
@@ -156,6 +172,7 @@ model User {
   reviews       Review[]
   favorites     Favorite[]
   notifications Notification[]
+  storeUsers    StoreUser[]
   auditLogs     AuditLog[]
 
   @@index([role])
@@ -169,6 +186,8 @@ model SellerProfile {
   commissionRateBp Int?
   isVerified       Boolean      @default(false)
   verificationNote String?
+  plan             SellerPlan   @default(FREE)
+  planExpiresAt    DateTime?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 
@@ -188,6 +207,13 @@ model Store {
   logoUrl         String?
   bannerUrl       String?
   whatsapp        String?
+  qrCodeUrl       String?
+  qrWaveUrl       String?
+  qrOrangeMoneyUrl String?
+  returnPolicy    String?
+  shippingPolicy  String?
+  theme           StoreTheme @default(BANNER)
+  storeTheme      Json?
   isActive        Boolean  @default(true)
   ratingAvg       Decimal  @default(0) @db.Decimal(3, 2)
   ratingCount     Int      @default(0)
@@ -202,8 +228,24 @@ model Store {
   deliveryRules DeliveryRule[]
   coupons       Coupon[]
   commissions   Commission[]
+  storeUsers    StoreUser[]
 
   @@index([ratingAvg])
+}
+
+model StoreUser {
+  id        String   @id @default(cuid())
+  storeId   String
+  userId    String
+  role      String   @default("MEMBER")
+  createdAt DateTime @default(now())
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, userId])
+  @@index([storeId])
+  @@index([userId])
 }
 
 // ============================================================
@@ -243,8 +285,12 @@ model Product {
   discountPrice BigInt?
   stock         Int           @default(0)
   sku           String?
-  status        ProductStatus @default(DRAFT)
-  isFeatured    Boolean       @default(false)
+  lowStockThreshold Int           @default(0)
+  status            ProductStatus @default(DRAFT)
+  isFeatured        Boolean       @default(false)
+  isDigital         Boolean       @default(false)
+  digitalFileUrl    String?
+  digitalFileSize   Int?
   ratingAvg     Decimal       @default(0) @db.Decimal(3, 2)
   ratingCount   Int           @default(0)
   soldCount     Int           @default(0)
@@ -272,6 +318,7 @@ model MediaAsset {
   productId String?
   storeId   String?
   url       String
+  publicId  String?
   alt       String?
   type      MediaType @default(IMAGE)
   position  Int       @default(0)
@@ -700,5 +747,51 @@ model AuditLog {
 
   @@index([userId])
   @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+// ============================================================
+// Commerce Social — Partage & Tracking
+// ============================================================
+
+enum ShareTargetType {
+  PRODUCT
+  STORE
+  CATEGORY
+}
+
+model ShareLink {
+  id           String          @id @default(cuid())
+  targetType   ShareTargetType
+  targetId     String
+  channelId    String          @default("copy")
+  url          String
+  clicks       Int             @default(0)
+  shares       Int             @default(0)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  events ShareEvent[]
+
+  @@unique([targetType, targetId, channelId])
+  @@index([targetType, targetId])
+  @@index([channelId])
+  @@index([createdAt])
+}
+
+model ShareEvent {
+  id           String          @id @default(cuid())
+  shareLinkId  String
+  userId       String?
+  channel      String
+  ip           String?
+  userAgent    String?
+  referrer     String?
+  createdAt    DateTime        @default(now())
+
+  shareLink ShareLink @relation(fields: [shareLinkId], references: [id], onDelete: Cascade)
+
+  @@index([shareLinkId])
+  @@index([userId])
   @@index([createdAt])
 }

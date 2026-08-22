@@ -65,3 +65,6 @@ Fournisseur carte bancaire · clés Wave/Orange Money · identifiants WhatsApp B
 |---|---|
 | Phase 1 | Stack validée : Next.js 16.3.1 / TS / Tailwind 4 / Prisma 7 / PostgreSQL 17 |
 | Phase 2 | TypeScript fixé sur 5.9.3 (typescript-eslint incompatible avec TS 7.0) — repli prévu en V2 |
+| Phase 4 | Authentification complète : NextAuth.js 4.24.15 (Credentials + JWT), `proxy.ts` protection routes (`/admin` = ADMIN, `/account`, `/seller`), register server action Zod+bcrypt, SessionProvider, types augmentés |
+| Phase 5 | Cloudinary intégré : SDK `cloudinary`, `CLOUDINARY_*` en env, `MediaAsset.publicId`, route handlers `POST /api/media/upload` + `DELETE /api/media/[id]` (auth + cloisonnement vendeur), `remotePatterns` `res.cloudinary.com` |
+| Phase 6 | Catalogue complet : admin CRUD catégories/produits/boutiques (listes, formulaires, delete), pages publiques (homepage, listings, détails produit/catégorie/boutique avec galerie+SEO+breadcrumbs), filtres/recherche/pagination produits, composants `CategoryForm`, `ProductForm`, `ProductFilters`, `ProductGallery`, `ImageUpload`, `DeleteButton`, `StoreForm` |

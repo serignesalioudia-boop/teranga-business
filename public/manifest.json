@@ -1,0 +1,22 @@
+{
+  "name": "Teranga Business",
+  "short_name": "Teranga",
+  "description": "La marketplace des commerçants du Sénégal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c8922d",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/logo.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
