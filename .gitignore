@@ -56,3 +56,4 @@ dev-output.log
 # misc
 colonne
 Microsoft.PowerShell.Commands.WebRequestSession
+.github/workflows/ci.yml
