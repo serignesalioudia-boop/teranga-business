@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { getSellerStore } from "@/server/actions/seller-store";
 import { StoreSettingsForm } from "@/components/seller/store-settings-form";

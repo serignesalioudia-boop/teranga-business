@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAllOrders } from "@/server/actions/orders";
 import { OrderTable } from "./_components/order-table";
 import { serialize } from "@/lib/serialize";

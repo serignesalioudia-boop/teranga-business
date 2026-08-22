@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getUserAddresses } from "@/server/actions/addresses";
 import { AddressesClient } from "./addresses-client";
 

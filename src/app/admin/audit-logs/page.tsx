@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAuditLogs, getAuditLogActions, getAuditLogEntityTypes } from "@/server/actions/audit-logs";
 import { formatPrice } from "@/lib/format";
 

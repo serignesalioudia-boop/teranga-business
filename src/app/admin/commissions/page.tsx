@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { formatPrice } from "@/lib/format";
 import { getCommissionStats, getCommissionByStore } from "@/server/actions/admin-commissions";
 

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAllDeliveries, getDeliveryStats } from "@/server/actions/deliveries";
 import { DELIVERY_STATUS_LABELS, DELIVERY_STATUS_COLORS } from "@/lib/order-status";
 import { formatPrice } from "@/lib/format";

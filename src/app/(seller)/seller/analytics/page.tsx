@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { redirect } from "next/navigation";
 import { formatPrice } from "@/lib/format";
 import { getSellerStore } from "@/server/actions/seller-stats";

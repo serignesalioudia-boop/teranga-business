@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAdminRefunds, getRefundStats } from "@/server/actions/refunds";
 import { RefundActions } from "@/components/admin/refund-actions";
 import { formatPrice } from "@/lib/format";

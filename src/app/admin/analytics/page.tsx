@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAdminAnalytics } from "@/server/actions/admin-analytics";
 import { formatPrice } from "@/lib/format";
 import { RevenueChart } from "./_components/revenue-chart";

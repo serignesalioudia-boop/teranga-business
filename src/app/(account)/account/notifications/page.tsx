@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getNotifications } from "@/server/actions/notifications";
 import { formatDistanceToNow } from "@/lib/utils";
 import { MarkAllReadButton } from "./_components/mark-all-read";

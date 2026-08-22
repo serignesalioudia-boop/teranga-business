@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { notFound } from "next/navigation";
 import { getStoreById } from "@/server/actions/stores";
 import { StoreForm } from "@/components/admin/store-form";

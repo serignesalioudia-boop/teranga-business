@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { getCategories } from "@/server/actions/categories";
 import { Button } from "@/components/ui/button";

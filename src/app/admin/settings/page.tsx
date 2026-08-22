@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getPlatformSettings } from "@/server/actions/platform-settings";
 import { PlatformSettingsForm } from "@/components/admin/platform-settings-form";
 

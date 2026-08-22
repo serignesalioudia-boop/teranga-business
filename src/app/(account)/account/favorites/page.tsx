@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { getUserFavorites } from "@/server/actions/favorites";
 import { ProductCard } from "@/components/product/product-card";

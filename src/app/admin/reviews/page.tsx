@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAdminReviews } from "@/server/actions/reviews";
 import { ReviewStatus } from "@/generated/prisma/enums";
 import { ReviewTable } from "./_components/review-table";

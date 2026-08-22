@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAdminStores } from "@/server/actions/stores";
 import { StoreTable } from "./_components/store-table";
 
