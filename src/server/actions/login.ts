@@ -45,16 +45,19 @@ export async function loginAction(email: string, password: string) {
       maxAge: 7 * 24 * 60 * 60,
     });
 
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieName = isProd ? "__Secure-next-auth.session-token" : "next-auth.session-token";
+
     const cookieStore = await cookies();
-    cookieStore.set("next-auth.session-token", token, {
+    cookieStore.set(cookieName, token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProd,
       sameSite: "lax",
       path: "/",
       maxAge: 7 * 24 * 60 * 60,
     });
 
-    if (process.env.NODE_ENV === "production") {
+    if (!isProd) {
       cookieStore.set("__Secure-next-auth.session-token", token, {
         httpOnly: true,
         secure: true,
