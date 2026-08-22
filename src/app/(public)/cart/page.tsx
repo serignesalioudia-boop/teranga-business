@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { getCart } from "@/server/actions/cart";
 import { CartItemRow, CartSummary } from "@/components/cart/cart-page";

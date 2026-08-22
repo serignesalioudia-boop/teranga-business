@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Accueil — Teranga Business",
   description:

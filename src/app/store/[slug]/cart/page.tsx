@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { notFound } from "next/navigation";
 import { getStoreBySlug } from "@/server/actions/stores";
 import { getCart } from "@/server/actions/cart";

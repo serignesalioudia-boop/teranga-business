@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getCategories } from "@/server/actions/categories";
 
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Catégories — Teranga Business",
   description: "Explorez toutes les catégories de produits disponibles.",
