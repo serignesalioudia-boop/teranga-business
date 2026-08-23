@@ -4,12 +4,12 @@ import { Pool } from "pg";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const dbUrl = process.env.DATABASE_URL ?? "NOT SET";
+  const dbUrl = (process.env.DATABASE_URL ?? "").replace(/^\uFEFF/, "NOT SET");
   const masked = dbUrl.replace(/:[^:@]+@/, ":***@");
 
   try {
     const pool = new Pool({
-      connectionString: dbUrl,
+      connectionString: (dbUrl || undefined),
       ssl: { rejectUnauthorized: false },
       connectionTimeoutMillis: 10000,
     });

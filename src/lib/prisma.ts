@@ -7,8 +7,9 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
+  const connectionString = (process.env.DATABASE_URL ?? "").replace(/^\uFEFF/, "");
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString,
     max: 5,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 15000,
