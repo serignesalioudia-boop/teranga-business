@@ -1,21 +1,31 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { Pool } from "pg";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const dbUrl = process.env.DATABASE_URL ?? "NOT SET";
+  const masked = dbUrl.replace(/:[^:@]+@/, ":***@");
+
   try {
-    const userCount = await prisma.user.count();
-    const dbUrl = process.env.DATABASE_URL ?? "NOT SET";
-    const masked = dbUrl.replace(/:[^:@]+@/, ":***@");
+    const pool = new Pool({
+      connectionString: dbUrl,
+      ssl: { rejectUnauthorized: false },
+      connectionTimeoutMillis: 10000,
+    });
+    const res = await pool.query("SELECT 1 as test");
+    await pool.end();
     return NextResponse.json({
       status: "ok",
-      userCount,
+      test: res.rows,
       databaseUrl: masked,
       nodeEnv: process.env.NODE_ENV,
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ status: "error", error: msg }, { status: 500 });
+    return NextResponse.json(
+      { status: "error", error: msg, databaseUrl: masked },
+      { status: 500 }
+    );
   }
 }
