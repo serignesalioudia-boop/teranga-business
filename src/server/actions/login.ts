@@ -26,7 +26,13 @@ export async function loginAction(email: string, password: string) {
       return { error: "E-mail ou mot de passe incorrect." };
     }
 
-    const valid = await bcrypt.compare(password, user.passwordHash);
+    let valid = false;
+    try {
+      valid = await bcrypt.compare(password, user.passwordHash);
+    } catch (e) {
+      console.error("[loginAction] bcrypt error:", e);
+      return { error: "Erreur interne. Veuillez réessayer." };
+    }
     if (!valid) {
       return { error: "E-mail ou mot de passe incorrect." };
     }
