@@ -1,6 +1,6 @@
-import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { jwtVerify } from "jose";
 
 const PUBLIC_PATHS = [
   "/login",
@@ -21,16 +21,33 @@ function isPublicPath(pathname: string): boolean {
   return false;
 }
 
+async function getSessionToken(request: NextRequest): Promise<Record<string, unknown> | null> {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) return null;
+
+  // Try __Secure- cookie first (production), then fallback
+  const cookie =
+    request.cookies.get("__Secure-next-auth.session-token")?.value ||
+    request.cookies.get("next-auth.session-token")?.value;
+
+  if (!cookie) return null;
+
+  try {
+    const key = new TextEncoder().encode(secret);
+    const { payload } = await jwtVerify(cookie, key, { algorithms: ["HS256"] });
+    return payload as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  const token = await getSessionToken(request);
 
   // Logged-in users on login/register → redirect home
-  if (isPublicPath(pathname) && ["/login", "/register"].includes(pathname) && token) {
+  if (["/login", "/register"].includes(pathname) && token) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -54,7 +71,7 @@ export async function proxy(request: NextRequest) {
 
   // Seller role check
   const isSeller = pathname === "/seller" || pathname.startsWith("/seller/");
-  if (isSeller && token.role !== ("SELLER" as string) && token.role !== ("ADMIN" as string)) {
+  if (isSeller && token.role !== "SELLER" && token.role !== "ADMIN") {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
