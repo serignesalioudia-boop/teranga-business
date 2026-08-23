@@ -14,16 +14,23 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ProfileMenu } from "@/components/auth/profile-menu";
 
 export async function Header() {
-  const session = await getServerSession(authOptions);
-  const isAdmin = session?.user?.role === Role.ADMIN;
-
+  let session = null;
   let sellerStatus: string | null = null;
-  if (session?.user?.id) {
-    const profile = await prisma.sellerProfile.findUnique({
-      where: { userId: session.user.id },
-      select: { status: true },
-    });
-    sellerStatus = profile?.status ?? null;
+  let isAdmin = false;
+
+  try {
+    session = await getServerSession(authOptions);
+    isAdmin = session?.user?.role === Role.ADMIN;
+
+    if (session?.user?.id) {
+      const profile = await prisma.sellerProfile.findUnique({
+        where: { userId: session.user.id },
+        select: { status: true },
+      });
+      sellerStatus = profile?.status ?? null;
+    }
+  } catch {
+    // DB might be down — render header without session
   }
 
   return (
