@@ -40,12 +40,6 @@ export function LoginForm({
       return;
     }
 
-    try {
-      await mergeGuestCart();
-    } catch {
-      // non-critical
-    }
-
     setPending(false);
     window.location.href = callbackUrl ?? "/";
   }
