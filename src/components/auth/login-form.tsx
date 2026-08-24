@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, LockKeyhole, LogIn, Mail } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,49 +9,59 @@ type LoginFormProps = {
   callbackUrl?: string;
   registered?: boolean;
   registeredEmail?: string;
+  serverError?: string;
 };
 
 export function LoginForm({
   callbackUrl,
   registered,
   registeredEmail,
+  serverError,
 }: LoginFormProps) {
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(serverError ?? null);
   const [pending, setPending] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setError(null);
     setPending(true);
 
-    const formData = new FormData(event.currentTarget);
-    const email = String(formData.get("email") ?? "");
-    const password = String(formData.get("password") ?? "");
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, callbackUrl }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || data.error) {
-        setError(data.error || "Erreur de connexion.");
-        setPending(false);
-        return;
-      }
-
-      window.location.replace(data.redirect || "/");
-    } catch {
-      setError("Erreur de connexion. Veuillez réessayer.");
+    if (!email || !password) {
+      setError("Email et mot de passe requis.");
       setPending(false);
+      return;
     }
+
+    fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, callbackUrl }),
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.error) {
+          setError(data.error || "Erreur de connexion.");
+          setPending(false);
+          return;
+        }
+        // Small delay to ensure browser commits Set-Cookie headers
+        setTimeout(() => {
+          window.location.href = data.redirect || "/";
+        }, 150);
+      })
+      .catch(() => {
+        setError("Erreur de connexion. Veuillez réessayer.");
+        setPending(false);
+      });
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form ref={formRef} onSubmit={onSubmit} className="flex flex-col gap-4">
       {registered && (
         <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
           Compte créé{registeredEmail ? ` pour ${registeredEmail}` : ""}.

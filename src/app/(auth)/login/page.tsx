@@ -9,6 +9,7 @@ export default async function LoginPage({
     callbackUrl?: string;
     registered?: string;
     email?: string;
+    error?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -32,6 +33,7 @@ export default async function LoginPage({
         callbackUrl={callbackUrl}
         registered={params.registered === "1"}
         registeredEmail={params.email}
+        serverError={params.error}
       />
       <p className="text-center text-sm text-muted-foreground">
         Pas encore de compte ?{" "}
