@@ -19,17 +19,34 @@ export default async function AdminDashboardPage() {
   const user = await getCurrentUser();
   if (!user || user.role !== "ADMIN") redirect("/login");
 
-  const [categories, products, stores, orders, revenue, pendingReviews] = await Promise.all([
-    prisma.category.count(),
-    prisma.product.count(),
-    prisma.store.count(),
-    prisma.order.count(),
-    prisma.order.aggregate({ _sum: { grandTotal: true }, where: { status: { not: "CANCELLED" } } }),
-    prisma.review.count({ where: { status: "PENDING" } }),
-  ]);
+  let categories = 0;
+  let products = 0;
+  let stores = 0;
+  let orders = 0;
+  let totalRevenue = BigInt(0);
+  let pendingReviews = 0;
+  let dashboard;
 
-  const totalRevenue = revenue._sum.grandTotal ?? BigInt(0);
-  const dashboard = await getDashboardData();
+  try {
+    const [cat, prod, stor, ord, rev, pr] = await Promise.all([
+      prisma.category.count(),
+      prisma.product.count(),
+      prisma.store.count(),
+      prisma.order.count(),
+      prisma.order.aggregate({ _sum: { grandTotal: true }, where: { status: { not: "CANCELLED" } } }),
+      prisma.review.count({ where: { status: "PENDING" } }),
+    ]);
+    categories = cat;
+    products = prod;
+    stores = stor;
+    orders = ord;
+    totalRevenue = rev._sum.grandTotal ?? BigInt(0);
+    pendingReviews = pr;
+    dashboard = await getDashboardData();
+  } catch (e) {
+    console.error("[AdminDashboard] DB error:", e);
+    dashboard = { totalUsers: 0, totalSellers: 0, activeProducts: 0, avgOrderValue: BigInt(0), revenueByWeek: [], ordersByStatus: [], topProducts: [], ordersByDay: [], recentOrders: [] };
+  }
 
   const cards = [
     { label: "Commandes", count: orders, href: "/admin/orders", icon: ShoppingBag },

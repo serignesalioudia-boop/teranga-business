@@ -49,11 +49,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  let product;
+  try {
+    product = await getProductBySlug(slug);
+  } catch (e) {
+    console.error("[ProductPage] DB error:", e);
+    notFound();
+  }
   if (!product) notFound();
 
-  const user = await getCurrentUser();
-  const alreadyReviewed = user ? await hasUserReviewed(product.id) : false;
+  let alreadyReviewed = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let user: any = null;
+  try {
+    user = await getCurrentUser();
+    alreadyReviewed = user ? await hasUserReviewed(product.id) : false;
+  } catch (e) {
+    console.error("[ProductPage] Review check error:", e);
+  }
 
   const sellerName =
     product.store.sellerProfile?.user?.name ?? product.store.name;

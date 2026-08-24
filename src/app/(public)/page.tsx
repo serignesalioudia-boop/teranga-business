@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/format";
 import {
   Store,
   ShoppingBag,
@@ -24,17 +23,32 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const [totalProducts, totalStores, totalOrders, categories] =
-    await Promise.all([
-      prisma.product.count({ where: { status: "PUBLISHED" } }),
-      prisma.store.count({ where: { isActive: true } }),
-      prisma.order.count({ where: { status: { not: "CANCELLED" } } }),
-      prisma.category.findMany({
-        take: 6,
-        orderBy: { name: "asc" },
-        include: { _count: { select: { products: true } } },
-      }),
-    ]);
+  let totalProducts = 0;
+  let totalStores = 0;
+  let totalOrders = 0;
+  let categories: {
+    id: string;
+    name: string;
+    slug: string;
+    icon: string | null;
+    _count: { products: number };
+  }[] = [];
+
+  try {
+    [totalProducts, totalStores, totalOrders, categories] =
+      await Promise.all([
+        prisma.product.count({ where: { status: "PUBLISHED" } }),
+        prisma.store.count({ where: { isActive: true } }),
+        prisma.order.count({ where: { status: { not: "CANCELLED" } } }),
+        prisma.category.findMany({
+          take: 6,
+          orderBy: { name: "asc" },
+          include: { _count: { select: { products: true } } },
+        }),
+      ]);
+  } catch (e) {
+    console.error("[HomePage] DB error:", e);
+  }
 
   return (
     <div className="space-y-0">

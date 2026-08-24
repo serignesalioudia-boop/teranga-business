@@ -22,28 +22,30 @@ const SELLER_STATUS_LABELS: Record<string, { label: string; icon: typeof Clock; 
 export default async function AccountPage() {
   const session = await getServerSession(authOptions);
 
-  const sellerProfile = session?.user?.id
-    ? await prisma.sellerProfile.findUnique({
-        where: { userId: session.user.id },
-        include: { store: { select: { name: true, slug: true } } },
-      })
-    : null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sellerProfile: any = null;
+  let orderCount = 0;
+  let reviewCount = 0;
+  let notificationCount = 0;
+  let favoriteCount = 0;
 
-  const orderCount = session?.user?.id
-    ? await prisma.order.count({ where: { userId: session.user.id } })
-    : 0;
-
-  const reviewCount = session?.user?.id
-    ? await prisma.review.count({ where: { userId: session.user.id } })
-    : 0;
-
-  const notificationCount = session?.user?.id
-    ? await prisma.notification.count({ where: { userId: session.user.id, isRead: false } })
-    : 0;
-
-  const favoriteCount = session?.user?.id
-    ? await prisma.favorite.count({ where: { userId: session.user.id } })
-    : 0;
+  try {
+    if (session?.user?.id) {
+      [sellerProfile, orderCount, reviewCount, notificationCount, favoriteCount] =
+        await Promise.all([
+          prisma.sellerProfile.findUnique({
+            where: { userId: session.user.id },
+            include: { store: { select: { name: true, slug: true } } },
+          }),
+          prisma.order.count({ where: { userId: session.user.id } }),
+          prisma.review.count({ where: { userId: session.user.id } }),
+          prisma.notification.count({ where: { userId: session.user.id, isRead: false } }),
+          prisma.favorite.count({ where: { userId: session.user.id } }),
+        ]);
+    }
+  } catch (e) {
+    console.error("[AccountPage] DB error:", e);
+  }
 
   const sellerStatus = sellerProfile ? SELLER_STATUS_LABELS[sellerProfile.status] : null;
 

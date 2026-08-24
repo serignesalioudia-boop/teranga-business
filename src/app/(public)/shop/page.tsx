@@ -19,10 +19,16 @@ export default async function ShopPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login?callbackUrl=/shop");
 
-  const profile = await prisma.sellerProfile.findUnique({
-    where: { userId: user.id },
-    select: { plan: true, planExpiresAt: true, status: true },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let profile: any = null;
+  try {
+    profile = await prisma.sellerProfile.findUnique({
+      where: { userId: user.id },
+      select: { plan: true, planExpiresAt: true, status: true },
+    });
+  } catch (e) {
+    console.error("[ShopPage] DB error:", e);
+  }
 
   if (!profile || profile.status !== "ACTIVE") {
     return (

@@ -27,28 +27,34 @@ export default async function DigitalDownloadPage({ params }: Props) {
   const user = await getCurrentUser();
   if (!user) notFound();
 
-  const order = await prisma.order.findUnique({
-    where: { id },
-    include: {
-      subOrders: {
-        include: {
-          items: {
-            include: {
-              product: {
-                select: {
-                  name: true,
-                  isDigital: true,
-                  digitalFileUrl: true,
-                  digitalFileSize: true,
+  let order;
+  try {
+    order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        subOrders: {
+          include: {
+            items: {
+              include: {
+                product: {
+                  select: {
+                    name: true,
+                    isDigital: true,
+                    digitalFileUrl: true,
+                    digitalFileSize: true,
+                  },
                 },
               },
-            },
           },
         },
       },
       payment: true,
     },
   });
+  } catch (e) {
+    console.error("[DigitalDownload] DB error:", e);
+    notFound();
+  }
 
   if (!order || order.userId !== user.id) {
     notFound();

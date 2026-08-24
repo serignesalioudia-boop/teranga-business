@@ -25,10 +25,10 @@ export function NotificationBell() {
   const [, startTransition] = useTransition();
 
   useEffect(() => {
-    getUnreadCount().then(setUnreadCount);
+    getUnreadCount().then(setUnreadCount).catch(() => {});
 
     const interval = setInterval(() => {
-      getUnreadCount().then(setUnreadCount);
+      getUnreadCount().then(setUnreadCount).catch(() => {});
     }, 30000);
 
     return () => clearInterval(interval);

@@ -18,12 +18,17 @@ export default async function SellerSettingsPage() {
   const store = await getSellerStore();
   const user = await getCurrentUser();
 
-  let sellerProfile = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sellerProfile: any = null;
   if (user) {
-    sellerProfile = await prisma.sellerProfile.findUnique({
-      where: { userId: user.id },
-      select: { plan: true, planExpiresAt: true },
-    });
+    try {
+      sellerProfile = await prisma.sellerProfile.findUnique({
+        where: { userId: user.id },
+        select: { plan: true, planExpiresAt: true },
+      });
+    } catch (e) {
+      console.error("[SellerSettings] DB error:", e);
+    }
   }
 
   const storeUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/store/${store.slug}`;

@@ -33,10 +33,16 @@ export default async function BecomeSellerPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login?callbackUrl=/account/become-seller");
 
-  const profile = await prisma.sellerProfile.findUnique({
-    where: { userId: user.id },
-    include: { store: { select: { name: true, slug: true } } },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let profile: any = null;
+  try {
+    profile = await prisma.sellerProfile.findUnique({
+      where: { userId: user.id },
+      include: { store: { select: { name: true, slug: true } } },
+    });
+  } catch (e) {
+    console.error("[BecomeSeller] DB error:", e);
+  }
 
   // Already active seller → redirect to dashboard
   if (profile?.status === "ACTIVE") {
@@ -45,7 +51,7 @@ export default async function BecomeSellerPage() {
 
   // Rejected or suspended → show reactivation form
   if (profile && (profile.status === "REJECTED" || profile.status === "SUSPENDED")) {
-    const config = STATUS_CONFIG[profile.status];
+    const config = STATUS_CONFIG[profile.status as keyof typeof STATUS_CONFIG];
     const Icon = config.icon;
 
     return (

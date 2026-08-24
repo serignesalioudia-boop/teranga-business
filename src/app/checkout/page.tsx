@@ -18,16 +18,29 @@ export default async function CheckoutPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login?callbackUrl=/checkout");
 
-  const [cart, addresses] = await Promise.all([getCart(), getUserAddresses()]);
+  let cart;
+  try {
+    cart = await getCart();
+  } catch (e) {
+    console.error("[CheckoutPage] Cart error:", e);
+    redirect("/cart");
+  }
+
+  const addresses = await getUserAddresses().catch(() => []);
 
   if (!cart || cart.items.length === 0) redirect("/cart");
 
-  const storeIds = [...new Set(cart.items.map((i) => i.product.store.id))];
-  const stores = await prisma.store.findMany({
-    where: { id: { in: storeIds } },
-    select: { id: true, qrCodeUrl: true, name: true },
-  });
-  const storeQrMap = Object.fromEntries(stores.map((s) => [s.id, s.qrCodeUrl]));
+  let storeQrMap: Record<string, string | null> = {};
+  try {
+    const storeIds = [...new Set(cart.items.map((i) => i.product.store.id))];
+    const stores = await prisma.store.findMany({
+      where: { id: { in: storeIds } },
+      select: { id: true, qrCodeUrl: true, name: true },
+    });
+    storeQrMap = Object.fromEntries(stores.map((s) => [s.id, s.qrCodeUrl]));
+  } catch (e) {
+    console.error("[CheckoutPage] Store fetch error:", e);
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">

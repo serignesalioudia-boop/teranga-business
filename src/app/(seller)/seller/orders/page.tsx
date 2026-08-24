@@ -15,22 +15,35 @@ export default async function SellerOrdersPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const sellerProfile = await prisma.sellerProfile.findUnique({
-    where: { userId: user.id },
-    include: { store: true },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sellerProfile: any = null;
+  try {
+    sellerProfile = await prisma.sellerProfile.findUnique({
+      where: { userId: user.id },
+      include: { store: true },
+    });
+  } catch (e) {
+    console.error("[SellerOrders] DB error:", e);
+    redirect("/");
+  }
 
   if (!sellerProfile?.store) redirect("/");
 
-  const subOrders = await prisma.subOrder.findMany({
-    where: { storeId: sellerProfile.store.id },
-    include: {
-      order: { select: { number: true, createdAt: true } },
-      items: { select: { productName: true, quantity: true } },
-      delivery: { select: { status: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let subOrders: any[] = [];
+  try {
+    subOrders = await prisma.subOrder.findMany({
+      where: { storeId: sellerProfile.store.id },
+      include: {
+        order: { select: { number: true, createdAt: true } },
+        items: { select: { productName: true, quantity: true } },
+        delivery: { select: { status: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (e) {
+    console.error("[SellerOrders] SubOrders error:", e);
+  }
 
   return (
     <div className="space-y-6">
@@ -49,7 +62,7 @@ export default async function SellerOrdersPage() {
               <div className="space-y-1">
                 <p className="font-mono text-sm font-bold">{sub.order.number}</p>
                 <p className="text-xs text-muted-foreground">
-                  {sub.items.map((i) => `${i.productName} ×${i.quantity}`).join(", ")}
+                  {sub.items.map((i: { productName: string; quantity: number }) => `${i.productName} ×${i.quantity}`).join(", ")}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {new Date(sub.order.createdAt).toLocaleDateString("fr-SN")}
