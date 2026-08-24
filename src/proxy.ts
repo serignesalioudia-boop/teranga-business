@@ -25,20 +25,22 @@ async function getToken(request: NextRequest) {
   const secret = process.env.NEXTAUTH_SECRET;
   if (!secret) return null;
 
-  const cookieName =
-    process.env.NODE_ENV === "production"
-      ? "__Secure-next-auth.session-token"
-      : "next-auth.session-token";
-  const tokenValue = request.cookies.get(cookieName)?.value;
-  if (!tokenValue) {
-    // Fallback: try both cookie names
-    const fallback =
-      request.cookies.get("__Secure-next-auth.session-token")?.value ||
-      request.cookies.get("next-auth.session-token")?.value;
-    if (!fallback) return null;
-    return decode({ token: fallback, secret });
+  const candidates = [
+    "__Secure-next-auth.session-token",
+    "next-auth.session-token",
+  ];
+
+  for (const name of candidates) {
+    const value = request.cookies.get(name)?.value;
+    if (!value) continue;
+    try {
+      const decoded = await decode({ token: value, secret });
+      return decoded;
+    } catch {
+      continue;
+    }
   }
-  return decode({ token: tokenValue, secret });
+  return null;
 }
 
 export async function proxy(request: NextRequest) {
