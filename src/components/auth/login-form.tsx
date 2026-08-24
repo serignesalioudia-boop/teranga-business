@@ -4,7 +4,6 @@ import { Loader2, LockKeyhole, LogIn, Mail } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import { loginAction } from "@/server/actions/login";
 
 type LoginFormProps = {
   callbackUrl?: string;
@@ -30,15 +29,22 @@ export function LoginForm({
     const password = String(formData.get("password") ?? "");
 
     try {
-      const result = await loginAction(email, password, callbackUrl);
-      if (result?.error) {
-        setError(result.error);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, callbackUrl }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        setError(data.error || "Erreur de connexion.");
         setPending(false);
+        return;
       }
-    } catch (err: unknown) {
-      if (typeof err === "object" && err !== null && "digest" in err && typeof (err as { digest: string }).digest === "string" && (err as { digest: string }).digest.includes("NEXT_REDIRECT")) {
-        throw err;
-      }
+
+      window.location.replace(data.redirect || "/");
+    } catch {
       setError("Erreur de connexion. Veuillez réessayer.");
       setPending(false);
     }

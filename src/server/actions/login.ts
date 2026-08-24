@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -8,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { encode } from "next-auth/jwt";
 import { cookies } from "next/headers";
 
-export async function loginAction(email: string, password: string, callbackUrl?: string) {
+export async function loginAction(email: string, password: string) {
   if (!email || !password) {
     return { error: "Email et mot de passe requis." };
   }
@@ -70,6 +69,8 @@ export async function loginAction(email: string, password: string, callbackUrl?:
       path: "/",
       maxAge: 7 * 24 * 60 * 60,
     });
+
+    return { ok: true };
   } catch (err: unknown) {
     console.error("[loginAction] Error:", err);
     const msg = err instanceof Error ? err.message : String(err);
@@ -78,9 +79,4 @@ export async function loginAction(email: string, password: string, callbackUrl?:
     }
     return { error: "Erreur de connexion. Veuillez réessayer." };
   }
-
-  const safeUrl = callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
-    ? callbackUrl
-    : "/";
-  redirect(safeUrl);
 }
