@@ -69,7 +69,7 @@ export function ProfileMenu({
                 Admin
               </Link>
             )}
-            {sellerStatus === "ACTIVE" && (
+            {sellerStatus === "ACTIVE" ? (
               <Link
                 href="/seller"
                 onClick={() => setOpen(false)}
@@ -77,6 +77,15 @@ export function ProfileMenu({
               >
                 <Store className="h-4 w-4" />
                 Espace vendeur
+              </Link>
+            ) : (
+              <Link
+                href="/account/become-seller"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition hover:bg-accent"
+              >
+                <Store className="h-4 w-4" />
+                Devenir vendeur
               </Link>
             )}
           </div>

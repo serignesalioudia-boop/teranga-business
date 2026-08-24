@@ -113,7 +113,7 @@ export function MobileMenu({
                     Admin
                   </Link>
                 )}
-                {sellerStatus === "ACTIVE" && (
+                {sellerStatus === "ACTIVE" ? (
                   <Link
                     href="/seller"
                     className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
@@ -122,8 +122,7 @@ export function MobileMenu({
                     <Store className="h-4 w-4" />
                     Espace vendeur
                   </Link>
-                )}
-                {!sellerStatus && (
+                ) : (
                   <Link
                     href="/account/become-seller"
                     className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"

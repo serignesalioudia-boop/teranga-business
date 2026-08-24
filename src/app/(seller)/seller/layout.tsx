@@ -12,9 +12,15 @@ export default async function SellerLayout({ children }: { children: React.React
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const sellerProfile = await prisma.sellerProfile.findUnique({
-    where: { userId: user.id },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let sellerProfile: any = null;
+  try {
+    sellerProfile = await prisma.sellerProfile.findUnique({
+      where: { userId: user.id },
+    });
+  } catch (e) {
+    console.error("[SellerLayout] DB error:", e);
+  }
 
   if (sellerProfile?.status === "ACTIVE") {
     return (
@@ -23,6 +29,11 @@ export default async function SellerLayout({ children }: { children: React.React
         <main className="flex-1 p-6 md:p-8">{children}</main>
       </div>
     );
+  }
+
+  // No profile or not active → redirect to become-seller
+  if (!sellerProfile || (sellerProfile.status !== "ACTIVE" && sellerProfile.status !== "SUSPENDED" && sellerProfile.status !== "REJECTED")) {
+    redirect("/account/become-seller");
   }
 
   // Suspended or rejected
