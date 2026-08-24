@@ -1,11 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Loader2, LockKeyhole, LogIn, Mail } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import { mergeGuestCart } from "@/server/actions/cart";
 import { loginAction } from "@/server/actions/login";
 
 type LoginFormProps = {
@@ -19,7 +17,6 @@ export function LoginForm({
   registered,
   registeredEmail,
 }: LoginFormProps) {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
