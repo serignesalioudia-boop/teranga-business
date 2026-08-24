@@ -43,6 +43,10 @@ export function GlobalSearch() {
           setResults(res);
           setLoading(false);
         }
+      }).catch(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       });
     }, 300);
   }, []);

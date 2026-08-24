@@ -45,29 +45,42 @@ export function NotificationBell() {
   async function toggleOpen() {
     if (!open) {
       setLoading(true);
-      const [notifs, count] = await Promise.all([getNotifications(15), getUnreadCount()]);
-      setNotifications(notifs as Notification[]);
-      setUnreadCount(count);
-      setLoading(false);
+      try {
+        const [notifs, count] = await Promise.all([getNotifications(15), getUnreadCount()]);
+        setNotifications(notifs as Notification[]);
+        setUnreadCount(count);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
     }
     setOpen(!open);
   }
 
   async function handleRead(id: string) {
-    await markAsRead(id);
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
-    setUnreadCount((prev) => Math.max(0, prev - 1));
-    const notif = notifications.find((n) => n.id === id);
-    if (notif?.link) {
-      setOpen(false);
-      startTransition(() => router.push(notif.link!));
+    try {
+      await markAsRead(id);
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+      const notif = notifications.find((n) => n.id === id);
+      if (notif?.link) {
+        setOpen(false);
+        startTransition(() => router.push(notif.link!));
+      }
+    } catch {
+      // silent
     }
   }
 
   async function handleMarkAllRead() {
-    await markAllAsRead();
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    setUnreadCount(0);
+    try {
+      await markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+      setUnreadCount(0);
+    } catch {
+      // silent
+    }
   }
 
   const TYPE_ICONS: Record<string, string> = {
