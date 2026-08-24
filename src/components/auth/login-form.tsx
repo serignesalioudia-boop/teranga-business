@@ -29,16 +29,19 @@ export function LoginForm({
     const email = String(formData.get("email") ?? "");
     const password = String(formData.get("password") ?? "");
 
-    const result = await loginAction(email, password);
-
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await loginAction(email, password, callbackUrl);
+      if (result?.error) {
+        setError(result.error);
+        setPending(false);
+      }
+    } catch (err: unknown) {
+      if (typeof err === "object" && err !== null && "digest" in err && typeof (err as { digest: string }).digest === "string" && (err as { digest: string }).digest.includes("NEXT_REDIRECT")) {
+        throw err;
+      }
+      setError("Erreur de connexion. Veuillez réessayer.");
       setPending(false);
-      return;
     }
-
-    setPending(false);
-    window.location.href = callbackUrl ?? "/";
   }
 
   return (
