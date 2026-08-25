@@ -34,15 +34,19 @@ export default async function SellerLayout({ children }: { children: React.React
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-6 text-center">
       <Store className="size-12 text-primary" />
-      <h1 className="text-2xl font-bold">Devenir vendeur</h1>
+      <h1 className="text-2xl font-bold">Bienvenue sur votre espace vendeur</h1>
       <p className="max-w-md text-muted-foreground">
-        Créez votre boutique et commencez à vendre sur Teranga Business.
+        {sellerProfile?.status === "SUSPENDED"
+          ? "Votre compte vendeur a été suspendu."
+          : sellerProfile?.status === "REJECTED"
+            ? "Votre candidature a été refusée."
+            : "Créez votre boutique pour commencer à vendre."}
       </p>
       <div className="flex gap-3">
         <Button asChild size="lg">
           <Link href="/account/become-seller">
             <Store className="mr-2 size-4" />
-            Créer ma boutique
+            {sellerProfile ? "Recréer ma boutique" : "Créer ma boutique"}
           </Link>
         </Button>
         <Button asChild variant="ghost">
