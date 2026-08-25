@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { SellerSidebar } from "@/components/seller/seller-sidebar";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import { Store } from "lucide-react";
 
 export const metadata = { title: "Vendeur — Teranga Business" };
 
@@ -31,27 +31,18 @@ export default async function SellerLayout({ children }: { children: React.React
     );
   }
 
-  // No profile or not active → redirect to become-seller
-  if (!sellerProfile || (sellerProfile.status !== "ACTIVE" && sellerProfile.status !== "SUSPENDED" && sellerProfile.status !== "REJECTED")) {
-    redirect("/account/become-seller");
-  }
-
-  // Suspended or rejected
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-6 text-center">
-      <AlertTriangle className="size-12 text-orange-500" />
-      <h1 className="text-2xl font-bold">Espace vendeur indisponible</h1>
+      <Store className="size-12 text-primary" />
+      <h1 className="text-2xl font-bold">Devenir vendeur</h1>
       <p className="max-w-md text-muted-foreground">
-        {sellerProfile?.status === "SUSPENDED"
-          ? "Votre compte vendeur a été suspendu."
-          : sellerProfile?.status === "REJECTED"
-            ? "Votre candidature a été refusée."
-            : "Vous n'avez pas de compte vendeur."}
+        Créez votre boutique et commencez à vendre sur Teranga Business.
       </p>
       <div className="flex gap-3">
-        <Button asChild>
+        <Button asChild size="lg">
           <Link href="/account/become-seller">
-            {sellerProfile ? "Recréer ma boutique" : "Devenir vendeur"}
+            <Store className="mr-2 size-4" />
+            Créer ma boutique
           </Link>
         </Button>
         <Button asChild variant="ghost">
