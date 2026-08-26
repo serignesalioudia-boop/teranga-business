@@ -15,7 +15,12 @@ export const metadata = {
 };
 
 export default async function SellerSettingsPage() {
-  const store = await getSellerStore();
+  let store;
+  try {
+    store = await getSellerStore();
+  } catch {
+    return (<div className="flex min-h-[50vh] items-center justify-center"><p className="text-muted-foreground">Chargement…</p></div>);
+  }
   const user = await getCurrentUser();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

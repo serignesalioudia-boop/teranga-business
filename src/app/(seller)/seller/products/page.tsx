@@ -32,7 +32,7 @@ export default async function SellerProductsPage() {
     const result = await getSellerStore();
     store = result.store;
   } catch {
-    redirect("/");
+    return (<div className="flex min-h-[50vh] items-center justify-center"><p className="text-muted-foreground">Chargement…</p></div>);
   }
 
   const { products, total } = await getProducts({

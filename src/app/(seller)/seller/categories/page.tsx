@@ -12,7 +12,7 @@ export default async function SellerCategoriesPage() {
   try {
     categories = await getSellerCategories();
   } catch {
-    redirect("/");
+    return (<div className="flex min-h-[50vh] items-center justify-center"><p className="text-muted-foreground">Chargement…</p></div>);
   }
 
   const usedCategories = categories.filter((c) => c.myProductCount > 0);

@@ -18,7 +18,11 @@ export default async function SellerDashboardPage() {
     const result = await getSellerStore();
     store = result.store;
   } catch {
-    redirect("/");
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <p className="text-muted-foreground">Chargement du tableau de bord…</p>
+      </div>
+    );
   }
 
   const [stats, recentSubOrders] = await Promise.all([
