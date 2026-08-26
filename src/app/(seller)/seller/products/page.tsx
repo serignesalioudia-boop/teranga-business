@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getProducts, deleteProduct } from "@/server/actions/products";
 import { getSellerStore } from "@/server/actions/seller-stats";
 import { Badge } from "@/components/ui/badge";

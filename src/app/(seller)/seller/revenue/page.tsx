@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import { redirect } from "next/navigation";
 import { getSellerStore, getSellerCommissions, getSellerStats } from "@/server/actions/seller-stats";
 import { formatPrice } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";

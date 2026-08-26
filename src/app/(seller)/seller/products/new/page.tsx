@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import { redirect } from "next/navigation";
 import { getCategories } from "@/server/actions/categories";
 import { getSellerStore } from "@/server/actions/seller-stats";
 import { ProductForm } from "@/components/product/product-form";

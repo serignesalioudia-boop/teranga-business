@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { formatPrice } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { SUBORDER_STATUS_LABELS, SUBORDER_STATUS_COLORS } from "@/lib/order-status";
@@ -18,25 +17,27 @@ export default async function SellerDashboardPage() {
     const result = await getSellerStore();
     store = result.store;
   } catch {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-muted-foreground">Chargement du tableau de bord…</p>
-      </div>
-    );
+    return null;
   }
 
-  const [stats, recentSubOrders] = await Promise.all([
-    getSellerStats(store.id),
-    prisma.subOrder.findMany({
-      where: { storeId: store.id },
-      include: {
-        order: { select: { number: true, createdAt: true } },
-        items: { select: { productName: true, quantity: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    }),
-  ]);
+  let stats;
+  let recentSubOrders;
+  try {
+    [stats, recentSubOrders] = await Promise.all([
+      getSellerStats(store.id),
+      prisma.subOrder.findMany({
+        where: { storeId: store.id },
+        include: {
+          order: { select: { number: true, createdAt: true } },
+          items: { select: { productName: true, quantity: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+      }),
+    ]);
+  } catch {
+    return null;
+  }
 
   return (
     <div className="space-y-6">

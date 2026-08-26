@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getProductById, getProductMedia } from "@/server/actions/products";
 import { getCategories } from "@/server/actions/categories";
 import { getSellerStore } from "@/server/actions/seller-stats";
