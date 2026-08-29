@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Teranga Business</string>
+    <string name="title_activity_main">Teranga Business</string>
+    <string name="package_name">sn.terangabusiness.app</string>
+    <string name="custom_url_scheme">sn.terangabusiness.app</string>
+</resources>

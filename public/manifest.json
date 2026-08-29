@@ -3,20 +3,41 @@
   "short_name": "Teranga",
   "description": "La marketplace des commerçants du Sénégal",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#c8922d",
-  "orientation": "any",
+  "orientation": "portrait",
+  "categories": ["shopping", "business"],
   "icons": [
     {
-      "src": "/logo.jpeg",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/logo.jpeg",
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Boutique",
+      "short_name": "Boutique",
+      "url": "/shop"
+    },
+    {
+      "name": "Commandes",
+      "short_name": "Commandes",
+      "url": "/account/orders"
+    },
+    {
+      "name": "Vendeur",
+      "short_name": "Vendeur",
+      "url": "/seller"
     }
   ]
 }
