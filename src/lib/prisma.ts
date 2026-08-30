@@ -8,10 +8,16 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  const connectionString = (process.env.DATABASE_URL ?? "").replace(
-    /^\uFEFF/,
-    "",
-  );
+  let connectionString = (process.env.DATABASE_URL ?? "")
+    .replace(/^\uFEFF/, "")
+    .trim();
+
+  // Remove sslmode from the URL so we can control TLS purely via pool ssl
+  // options (pg>=8 treats sslmode=require as verify-full, which fails against
+  // Supabase's pooler self-signed chain).
+  connectionString = connectionString
+    .replace(/[?&]sslmode=[^&]*/gi, "")
+    .replace(/\?$/, "");
 
   const pool = new Pool({
     connectionString,
