@@ -57,23 +57,30 @@ async function authenticate(email: string, password: string): Promise<AuthResult
 }
 
 function setCookies(response: NextResponse, token: string) {
+  // Match NextAuth v4's own cookie strategy exactly: in production (https) it
+  // sets __Secure-next-auth.session-token and only recognises that one; in
+  // development it uses next-auth.session-token. Setting both created a
+  // desync where /api/auth/session (NextAuth) and the server-side proxy/layout
+  // could disagree, causing spurious disconnections. Only set the matching one.
   const isProd = process.env.NODE_ENV === "production";
 
-  response.cookies.set("next-auth.session-token", token, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60,
-  });
-
-  response.cookies.set("__Secure-next-auth.session-token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60,
-  });
+  if (isProd) {
+    response.cookies.set("__Secure-next-auth.session-token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+    });
+  } else {
+    response.cookies.set("next-auth.session-token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+    });
+  }
 
   return response;
 }

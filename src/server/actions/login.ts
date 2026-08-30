@@ -54,21 +54,27 @@ export async function loginAction(email: string, password: string) {
     const isProd = process.env.NODE_ENV === "production";
     const cookieStore = await cookies();
 
-    cookieStore.set("next-auth.session-token", token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60,
-    });
-
-    cookieStore.set("__Secure-next-auth.session-token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60,
-    });
+    // Match NextAuth v4 cookie strategy: only __Secure- in production (https),
+    // only plain in development. Setting both desynced NextAuth's
+    // /api/auth/session from the server-side session readers and could cause
+    // spurious disconnections.
+    if (isProd) {
+      cookieStore.set("__Secure-next-auth.session-token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60,
+      });
+    } else {
+      cookieStore.set("next-auth.session-token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60,
+      });
+    }
 
     return { ok: true };
   } catch (err: unknown) {
