@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const PUBLIC_PATHS = [
+  "/",
   "/login",
   "/register",
   "/shop",
@@ -65,18 +66,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Admin role check
-  const isAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
-  if (isAdmin && token.role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  // Seller role check
-  const isSeller = pathname === "/seller" || pathname.startsWith("/seller/");
-  if (isSeller && token.role !== ("SELLER" as string) && token.role !== ("ADMIN" as string)) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
+  // Authenticated users may proceed. Role/status-specific access is enforced
+  // by the corresponding layouts: /admin checks user.role === ADMIN, and
+  // /seller checks sellerProfile.status === ACTIVE.
   return NextResponse.next();
 }
 
