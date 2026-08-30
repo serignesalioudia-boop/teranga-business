@@ -61,18 +61,6 @@ export const authOptions: NextAuthOptions = {
         token.isActive = user.isActive;
         token.iat = Math.floor(Date.now() / 1000);
       }
-      if (token.id && !user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true, isActive: true },
-        });
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.isActive = dbUser.isActive;
-        } else {
-          token.isActive = false;
-        }
-      }
       return token;
     },
     async session({ session, token }) {
