@@ -20,6 +20,10 @@ Index de la documentation du projet. Chaque document est produit au fil des phas
 | ADMIN.md | Guide administrateur | À rédiger |
 | SELLER.md | Guide vendeur | À rédiger |
 | CUSTOMER.md | Guide client | À rédiger |
+| [LANCEMENT-SEO-VISIBILITE.md](./LANCEMENT-SEO-VISIBILITE.md) | Mise en ligne, SEO, Google, visibilité (livrables A–M) | **Rédigé** |
+| [DESCRIPTION-OFFICIELLE.md](./DESCRIPTION-OFFICIELLE.md) | Description complète du site (tous supports) | **Rédigé** |
+| [BILLINGUE-RESEAUX-SOCIAUX.md](./BILLINGUE-RESEAUX-SOCIAUX.md) | Description bilingue FR/Wolof + textes réseaux sociaux | **Rédigé** |
+| [DESCRIPTION-TRILINGUE.md](./DESCRIPTION-TRILINGUE.md) | Description officielle FR / EN / ZH | **Rédigé** |
 
 ## Règles du projet
 

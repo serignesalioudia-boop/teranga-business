@@ -1,11 +1,28 @@
 # Teranga Business
 
+> 🇫🇷 **La marketplace des commerçants du Sénégal**
+> 🇬🇧 **The marketplace of Senegalese merchants**
+> 🇨🇳 **塞内加尔商人市场平台**
+
+**Teranga Business** est une plateforme sénégalaise de commerce et de services en ligne. Elle connecte les vendeurs et prestataires locaux aux acheteurs, avec paiements mobiles (Wave, Orange Money), paiement à la livraison et livraison suivie.
+
+**Teranga Business** is a Senegalese online commerce and services platform connecting local sellers and service providers with buyers, featuring mobile payments (Wave, Orange Money), cash on delivery and tracked delivery.
+
+**Teranga Business** 是塞内加尔的在线商业和服务平台，将本地卖家和服务提供商与买家联系起来，支持移动支付（Wave、Orange Money）、货到付款和配送跟踪。
+
+Créateur / Creator / 创建者 : **Serigne Salio Dia Boop**
+
 Marketplace e-commerce multi-vendeurs destinée au marché sénégalais.
 
 Plateforme permettant :
 - aux clients d'acheter des produits ;
 - aux vendeurs de créer leur boutique, publier leurs produits et gérer leurs commandes ;
 - à Teranga Business d'administrer la plateforme et de percevoir une commission sur les ventes.
+
+## Documentation
+
+- Description trilingue : [`docs/DESCRIPTION-TRILINGUE.md`](./docs/DESCRIPTION-TRILINGUE.md)
+- Voir [`docs/`](./docs/README.md) pour toute la documentation.
 
 ## Technologies
 
@@ -65,10 +82,6 @@ Site : http://localhost:3000 — Adminer (visualisation DB) : http://localhost:8
 | `npm run typecheck` | Vérification TypeScript |
 | `npm run db:migrate` | Migration Prisma (dev) |
 | `npm run db:seed` | Données de démonstration |
-
-## Documentation
-
-Voir [`docs/`](./docs/README.md).
 
 ## Sécurité
 
