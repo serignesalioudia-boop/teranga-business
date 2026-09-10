@@ -24,7 +24,7 @@ export async function initWavePayment(params: {
   }
 
   try {
-    const response = await fetch(`${WAVE_API_URL}/merchant/payments`, {
+    const response = await fetch(`${WAVE_API_URL}/checkout/sessions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,13 +33,9 @@ export async function initWavePayment(params: {
       body: JSON.stringify({
         amount: params.amount,
         currency: params.currency,
-        merchant_id: WAVE_MERCHANT_ID,
-        customer_name: params.customerName,
-        customer_phone: params.customerPhone,
-        description: params.description,
         reference: params.orderId,
-        return_url: `${BASE_URL}/checkout/confirmation/${params.orderId}`,
-        cancel_url: `${BASE_URL}/cart`,
+        success_url: `${BASE_URL}/checkout/confirmation/${params.orderId}`,
+        error_url: `${BASE_URL}/cart`,
       }),
     });
 
@@ -49,7 +45,7 @@ export async function initWavePayment(params: {
       return {
         success: false,
         paymentId: data.id ?? "",
-        error: data.message || "Erreur Wave",
+        error: data.message || data.code || "Erreur Wave",
       };
     }
 
@@ -57,7 +53,7 @@ export async function initWavePayment(params: {
       success: true,
       paymentId: data.id,
       redirectUrl: data.payment_url,
-      reference: data.reference,
+      reference: data.reference ?? params.orderId,
     };
   } catch (error) {
     return {
@@ -88,19 +84,21 @@ export function verifyWaveWebhook(
     return null;
   }
 
-  const status = payload.status as string;
+  // Nouveau format Checkout API : payload.data.id, payload.data.reference, payload.data.payment_status
+  const data = (payload.data as Record<string, unknown>) ?? payload;
+  const status = (data.payment_status as string) ?? (payload.status as string);
   const mappedStatus =
-    status === "SUCCESSFUL"
+    status === "SUCCESSFUL" || status === "COMPLETED"
       ? "SUCCESS"
-      : status === "FAILED"
+      : status === "FAILED" || status === "EXPIRED" || status === "CANCELLED"
         ? "FAILED"
         : "PENDING";
 
   return {
     provider: "WAVE",
-    reference: (payload.reference as string) ?? "",
+    reference: (data.reference as string) ?? (payload.reference as string) ?? "",
     status: mappedStatus as "SUCCESS" | "FAILED" | "PENDING",
-    amount: Number(payload.amount ?? 0),
-    transactionId: payload.id as string | undefined,
+    amount: Number((data.amount as { total?: number })?.total ?? (data.amount as number) ?? 0),
+    transactionId: (data.id as string) ?? (payload.id as string) ?? undefined,
   };
 }
