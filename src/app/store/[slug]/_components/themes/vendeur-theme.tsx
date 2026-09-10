@@ -14,6 +14,7 @@ import {
   Home,
   ShoppingBag,
   Truck,
+  ArrowLeft,
 } from "lucide-react";
 import { ProductCard } from "@/components/product/product-card";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
@@ -64,7 +65,16 @@ export function VendeurTheme({
       {/* ══════════ HEADER ══════════ */}
       <header className="sticky top-0 z-50 border-b border-[rgba(200,146,45,0.35)]" style={{ backgroundColor: S.secondary }}>
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3">
-          <Link href={`/store/${storeSlug}`} className="flex items-center gap-2 sm:gap-3 text-white no-underline">
+          <div className="flex min-w-0 items-center gap-1 sm:gap-2">
+            <Link
+              href="/"
+              className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-1 text-xs sm:text-sm font-medium text-white/90 transition hover:bg-white/15 hover:text-white"
+              title="Retour au site"
+            >
+              <ArrowLeft className="size-3.5 sm:size-4" />
+              <span className="hidden sm:inline">Site</span>
+            </Link>
+            <Link href={`/store/${storeSlug}`} className="flex items-center gap-2 sm:gap-3 text-white no-underline">
             {store.logoUrl ? (
               <img
                 src={store.logoUrl}
@@ -84,6 +94,7 @@ export function VendeurTheme({
               {store.name}
             </span>
           </Link>
+          </div>
 
           <nav className="hidden items-center gap-3 sm:gap-5 md:flex">
             <Link
@@ -252,7 +263,7 @@ export function VendeurTheme({
             <div className="grid grid-cols-2 gap-3 sm:gap-6">
               {featuredProducts.map((p) => (
                 <div key={p.id} className="relative">
-                  <ProductCard product={p} favoriteIds={favoriteIds} subtitle="category" variant="store" />
+                  <ProductCard product={p} favoriteIds={favoriteIds} subtitle="category" variant="store" storeSlug={storeSlug} />
                   <AddToCartButton productId={p.id} storeSlug={storeSlug} />
                 </div>
               ))}
@@ -359,7 +370,7 @@ export function VendeurTheme({
             <div className="grid grid-cols-2 gap-3 sm:gap-6">
               {sortedProducts.map((p) => (
                 <div key={p.id} className="relative">
-                  <ProductCard product={p} favoriteIds={favoriteIds} subtitle="category" variant="store" />
+                  <ProductCard product={p} favoriteIds={favoriteIds} subtitle="category" variant="store" storeSlug={storeSlug} />
                   <AddToCartButton productId={p.id} storeSlug={storeSlug} />
                 </div>
               ))}

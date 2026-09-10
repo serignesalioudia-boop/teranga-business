@@ -20,20 +20,25 @@ export function ProductCard({
   favoriteIds,
   subtitle = "store",
   variant = "marketplace",
+  storeSlug,
 }: {
   product: ProductCardProduct;
   favoriteIds?: Set<string>;
   subtitle?: "store" | "category";
   variant?: "marketplace" | "store";
+  storeSlug?: string;
 }) {
   const discount = p.discountPrice && BigInt(p.discountPrice) > 0;
   const subtitleText =
     subtitle === "category" && p.category ? p.category.name : p.store?.name ?? "";
+  const productHref = storeSlug
+    ? `/product/${p.slug}?from=store&store=${encodeURIComponent(storeSlug)}`
+    : `/product/${p.slug}`;
 
   if (variant === "store") {
     return (
       <div className="group relative overflow-hidden rounded-xl bg-[#fffdf8] shadow-md transition hover:-translate-y-1 hover:shadow-xl">
-        <Link href={`/product/${p.slug}`} className="block">
+        <Link href={productHref} className="block">
           <div className="relative aspect-square overflow-hidden bg-[#f7ead3]">
             {p.media[0] ? (
               <img

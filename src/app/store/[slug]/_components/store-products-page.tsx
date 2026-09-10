@@ -279,7 +279,7 @@ export function StoreProductsPage({
               <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
                 {sortedProducts.map((p) => (
                   <div key={p.id} className="relative">
-                    <ProductCard product={p} favoriteIds={favoriteIds} subtitle="category" variant="store" />
+                    <ProductCard product={p} favoriteIds={favoriteIds} subtitle="category" variant="store" storeSlug={store.slug} />
                     <AddToCartButton productId={p.id} />
                   </div>
                 ))}

@@ -91,7 +91,7 @@ export default async function StoreCategoryPage({ params, searchParams }: Props)
       {products.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {products.map((p) => (
-            <ProductCard key={p.id} product={p} favoriteIds={favSet} subtitle="category" />
+            <ProductCard key={p.id} product={p} favoriteIds={favSet} subtitle="category" variant="store" storeSlug={store.slug} />
           ))}
         </div>
       ) : (

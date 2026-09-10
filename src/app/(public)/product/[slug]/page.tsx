@@ -15,7 +15,10 @@ import { formatPrice } from "@/lib/format";
 import { getCurrentUser } from "@/lib/session";
 import type { Metadata } from "next";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ from?: string; store?: string }>;
+};
 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -47,8 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const sp = await searchParams;
+  const fromStore = sp?.from === "store";
+  const storeReturnSlug = fromStore ? (sp?.store ?? null) : null;
   let product;
   try {
     product = await getProductBySlug(slug);
@@ -113,13 +119,27 @@ export default async function ProductPage({ params }: Props) {
 
       {/* Breadcrumbs */}
       <nav className="mb-6 text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-primary">Accueil</Link>
-        <span className="mx-1">/</span>
-        <Link href={`/category/${product.category.slug}`} className="hover:text-primary">
-          {product.category.name}
-        </Link>
-        <span className="mx-1">/</span>
-        <span className="text-foreground">{product.name}</span>
+        {fromStore && (storeReturnSlug || product.store.slug) ? (
+          <Link
+            href={`/store/${storeReturnSlug ?? product.store.slug}`}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[#cbd5e1] bg-white px-3 py-1.5 font-medium text-[#24160c] transition hover:border-[#c8922d] hover:bg-[#fff7e6] hover:text-[#c8922d]"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Retour à la boutique
+          </Link>
+        ) : (
+          <>
+            <Link href="/" className="hover:text-primary">Accueil</Link>
+            <span className="mx-1">/</span>
+            <Link href={`/category/${product.category.slug}`} className="hover:text-primary">
+              {product.category.name}
+            </Link>
+            <span className="mx-1">/</span>
+            <span className="text-foreground">{product.name}</span>
+          </>
+        )}
       </nav>
 
       <div className="grid gap-8 md:grid-cols-2">

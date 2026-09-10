@@ -1,0 +1,120 @@
+name: Build iOS (Teranga Business)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+env:
+  APP_NAME: "Teranga Business"
+  SCHEME: "App"
+  CONFIGURATION: "Release"
+  OUTPUT_DIR: "build/output"
+
+jobs:
+  build-ios:
+    name: Build iOS IPA
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Resolve SPM dependencies
+        run: |
+          cd ios/App
+          xcodebuild -resolvePackageDependencies \
+            -project App.xcodeproj \
+            -scheme ${{ env.SCHEME }} \
+            -clonedSourcePackagesDirPath SourcePackages
+
+      - name: Build IPA
+        run: |
+          cd ios/App
+          xcodebuild archive \
+            -project App.xcodeproj \
+            -scheme ${{ env.SCHEME }} \
+            -configuration ${{ env.CONFIGURATION }} \
+            -archivePath ${{ github.workspace }}/build/App.xcarchive \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty
+
+      - name: Export IPA
+        run: |
+          mkdir -p ${{ env.OUTPUT_DIR }}
+
+          cat > export-options.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>destination</key>
+            <string>upload</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>compileBitcode</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -exportArchive \
+            -archivePath ${{ github.workspace }}/build/App.xcarchive \
+            -exportOptionsPlist export-options.plist \
+            -exportPath ${{ env.OUTPUT_DIR }}
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TerangaBusiness-iOS-${{ github.run_number }}
+          path: ${{ env.OUTPUT_DIR }}/*.ipa
+          retention-days: 30
+
+      - name: Upload to App Store Connect (TestFlight)
+        if: env.APP_STORE_CONNECT_API_KEY != ''
+        env:
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cat > AuthKey.json << EOF
+          {
+            "key": "${{ secrets.APP_STORE_CONNECT_API_KEY }}",
+            "keyId": "${{ secrets.APP_STORE_CONNECT_KEY_ID }}",
+            "issuerId": "${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}",
+            "inTeam": "${{ secrets.APPLE_TEAM_ID }}"
+          }
+          EOF
+
+          xcrun notarytool submit \
+            ${{ env.OUTPUT_DIR }}/*.ipa \
+            --key AuthKey.json \
+            --team-id "${{ secrets.APPLE_TEAM_ID }}" \
+            --wait
+
+          rm -f AuthKey.json
+
+      - name: Cleanup
+        if: always()
+        run: rm -f export-options.plist AuthKey.json

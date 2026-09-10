@@ -37,10 +37,6 @@ function buildShareHref(channel: string, url: string, title: string): string {
       return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
     case "messenger":
       return `https://www.messenger.com/share/link?link=${encodedUrl}`;
-    case "instagram":
-      return `https://www.instagram.com/`;
-    case "tiktok":
-      return `https://www.tiktok.com/`;
     case "sms":
       return `sms:?body=${text}`;
     default:
@@ -107,6 +103,33 @@ export function ShareButtons({
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
 
+  async function copyLink(): Promise<void> {
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  // Instagram et TikTok n'ont pas d'URL de "share" web publique.
+  // On utilise la Web Share API (navigator.share) qui ouvre la feuille de
+  // partage native du téléphone : on peut y choisir WhatsApp, Instagram
+  // (publication ou Story), TikTok, Facebook, etc.
+  async function shareNative(): Promise<boolean> {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text: title ? `${title} — Découvrez ce produit sur Teranga Business` : `Découvrez ce produit sur Teranga Business`,
+          url,
+        });
+        return true;
+      } catch (err) {
+        // L'utilisateur a annulé la feuille de partage ou l'échec → fallback
+        if ((err as Error)?.name === "AbortError") return true;
+      }
+    }
+    return false;
+  }
+
   async function handleChannelClick(channel: string) {
     try {
       await trackShare(targetType, targetId, targetSlug, channel);
@@ -115,9 +138,20 @@ export function ShareButtons({
     }
 
     if (channel === "copy") {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await copyLink();
+      return;
+    }
+
+    // Instagram et TikTok : partage natif réel (amis, statut, publication).
+    if (channel === "instagram" || channel === "tiktok") {
+      const shared = await shareNative();
+      if (shared) return;
+      // Desktop / pas de Web Share : copier le lien, puis ouvrir l'app
+      await copyLink();
+      const appUrl = channel === "instagram"
+        ? "https://www.instagram.com/"
+        : "https://www.tiktok.com/";
+      window.open(appUrl, "_blank", "noopener,noreferrer,width=600,height=400");
       return;
     }
 
