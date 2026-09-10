@@ -80,6 +80,8 @@ export default async function StorePage({ params, searchParams }: Props) {
   const sellerName = store.sellerProfile?.user?.name ?? store.name;
   const storeThemeConfig = getStoreThemeConfig(store.storeTheme);
 
+  const storeUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/store/${store.slug}`;
+
   return (
     <>
       <script
@@ -91,7 +93,21 @@ export default async function StorePage({ params, searchParams }: Props) {
             name: store.name,
             description: store.description ?? undefined,
             image: store.logoUrl ?? store.bannerUrl ?? undefined,
-            url: `https://terangabusiness.sn/store/${store.slug}`,
+            url: storeUrl,
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Accueil", item: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/` },
+              { "@type": "ListItem", position: 2, name: "Boutiques", item: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/products` },
+              { "@type": "ListItem", position: 3, name: store.name },
+            ],
           }),
         }}
       />

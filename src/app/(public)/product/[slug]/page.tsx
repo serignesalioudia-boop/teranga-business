@@ -110,11 +110,25 @@ export default async function ProductPage({ params, searchParams }: Props) {
       : undefined,
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/` },
+      { "@type": "ListItem", position: 2, name: product.category.name, item: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/category/${product.category.slug}` },
+      { "@type": "ListItem", position: 3, name: product.name },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       {/* Breadcrumbs */}
