@@ -66,7 +66,11 @@ export function CheckoutClient({
         addressId: selectedAddressId,
         paymentMethod: paymentMethod as "WAVE" | "ORANGE_MONEY" | "COD",
       });
-      router.push(`/checkout/confirmation/${result.orderId}`);
+      if (result.paymentUrl) {
+        window.location.href = result.paymentUrl;
+      } else {
+        router.push(`/checkout/confirmation/${result.orderId}`);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la commande.");
       setPending(false);

@@ -4,9 +4,8 @@ import type { PaymentInitResult, PaymentWebhookPayload } from "./types";
 const WAVE_API_URL = process.env.WAVE_API_URL || "https://api.wave.com/v1";
 const WAVE_API_KEY = process.env.WAVE_API_KEY || "";
 const WAVE_MERCHANT_ID = process.env.WAVE_MERCHANT_ID || "";
-const WAVE_RETURN_URL = process.env.WAVE_RETURN_URL || "";
-const WAVE_CANCEL_URL = process.env.WAVE_CANCEL_URL || "";
 const WAVE_WEBHOOK_SECRET = process.env.WAVE_WEBHOOK_SECRET || "";
+const BASE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 export async function initWavePayment(params: {
   amount: number;
@@ -39,8 +38,8 @@ export async function initWavePayment(params: {
         customer_phone: params.customerPhone,
         description: params.description,
         reference: params.orderId,
-        return_url: WAVE_RETURN_URL,
-        cancel_url: WAVE_CANCEL_URL,
+        return_url: `${BASE_URL}/checkout/confirmation/${params.orderId}`,
+        cancel_url: `${BASE_URL}/cart`,
       }),
     });
 

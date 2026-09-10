@@ -5,9 +5,8 @@ const ORANGE_API_URL = process.env.ORANGE_API_URL || "https://api.orange.com/ora
 const ORANGE_CLIENT_ID = process.env.ORANGE_CLIENT_ID || "";
 const ORANGE_CLIENT_SECRET = process.env.ORANGE_CLIENT_SECRET || "";
 const ORANGE_MERCHANT_KEY = process.env.ORANGE_MERCHANT_KEY || "";
-const ORANGE_RETURN_URL = process.env.ORANGE_RETURN_URL || "";
-const ORANGE_CANCEL_URL = process.env.ORANGE_CANCEL_URL || "";
 const ORANGE_WEBHOOK_SECRET = process.env.ORANGE_WEBHOOK_SECRET || "";
+const BASE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 async function getOrangeAccessToken(): Promise<string | null> {
   if (!ORANGE_CLIENT_ID || !ORANGE_CLIENT_SECRET) return null;
@@ -53,9 +52,9 @@ export async function initOrangeMoneyPayment(params: {
         merchant_key: ORANGE_MERCHANT_KEY,
         currency: params.currency === "XOF" ? "OUV" : params.currency,
         amount: params.amount,
-        return_url: ORANGE_RETURN_URL,
-        cancel_url: ORANGE_CANCEL_URL,
-        notif_url: `${process.env.NEXTAUTH_URL}/api/webhooks/orange-money`,
+        return_url: `${BASE_URL}/checkout/confirmation/${params.orderId}`,
+        cancel_url: `${BASE_URL}/cart`,
+        notif_url: `${BASE_URL}/api/webhooks/orange-money`,
         reference: params.orderId,
         description: params.description,
       }),

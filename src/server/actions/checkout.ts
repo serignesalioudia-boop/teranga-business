@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/session";
 import { clearCart } from "./cart";
 import { randomBytes } from "node:crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { initPayment } from "@/lib/payments";
 import type { Prisma } from "@/generated/prisma/client";
 
 // ─── Générer numéro de commande unique ───────────────────
@@ -332,6 +333,31 @@ export async function placeOrder(input: {
   // ── 13. Vider le panier ──
   await clearCart();
 
+  // ── 13b. Initier le paiement (Wave / Orange Money) ──
+  let paymentUrl: string | undefined;
+  if (input.paymentMethod === "WAVE" || input.paymentMethod === "ORANGE_MONEY") {
+    const buyer = await prisma.user.findUnique({
+      where: { id: user?.id ?? "" },
+      select: { name: true, phone: true },
+    });
+    const paymentResult = await initPayment(input.paymentMethod, {
+      amount: Number(order.grandTotal),
+      currency: "XOF",
+      orderId: order.id,
+      customerName: buyer?.name ?? input.guestEmail ?? "Client",
+      customerPhone: buyer?.phone ?? input.guestPhone ?? "",
+      description: `Commande ${order.number} — Teranga Business`,
+    });
+
+    if (paymentResult.success && paymentResult.redirectUrl) {
+      paymentUrl = paymentResult.redirectUrl;
+      await prisma.payment.update({
+        where: { orderId: order.id },
+        data: { providerTransactionId: paymentResult.paymentId },
+      });
+    }
+  }
+
   // ── 14. Notifications + Emails ──
   const { createNotificationInternal } = await import("@/lib/notifications-internal");
   const { NotificationType } = await import("@/generated/prisma/enums");
@@ -440,7 +466,7 @@ export async function placeOrder(input: {
     }
   }
 
-  return { orderId: order.id, orderNumber: order.number };
+  return { orderId: order.id, orderNumber: order.number, paymentUrl };
 }
 
 // ─── Récupérer une commande ──────────────────────────────

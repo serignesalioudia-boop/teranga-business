@@ -115,8 +115,12 @@ export function StoreCartPage({
         telephone,
         modePaiement: methodMap[modePaiement],
       });
-      setFlash({ msg: `Commande ${result.orderNumber} confirmée ! Merci ${nom}.`, type: "info" });
-      router.refresh();
+      if (result.paymentUrl) {
+        window.location.href = result.paymentUrl;
+      } else {
+        setFlash({ msg: `Commande ${result.orderNumber} confirmée ! Merci ${nom}.`, type: "info" });
+        router.refresh();
+      }
     } catch (err) {
       setFlash({ msg: err instanceof Error ? err.message : "Erreur lors de la commande.", type: "error" });
     }

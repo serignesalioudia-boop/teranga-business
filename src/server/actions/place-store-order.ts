@@ -6,6 +6,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { clearCart } from "./cart";
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
+import { initPayment } from "@/lib/payments";
 import type { Prisma } from "@/generated/prisma/client";
 
 function generateOrderNumber(): string {
@@ -231,6 +232,27 @@ export async function placeStoreOrder(input: {
     where: { id: { in: storeItemIds } },
   });
 
+  // ── 5b. Initier le paiement (Wave / Orange Money) ──
+  let paymentUrl: string | undefined;
+  if (modePaiement === "WAVE" || modePaiement === "ORANGE_MONEY") {
+    const paymentResult = await initPayment(modePaiement, {
+      amount: Number(grandTotal),
+      currency: "XOF",
+      orderId: order.id,
+      customerName: nom,
+      customerPhone: telephone,
+      description: `Commande ${order.number} — Teranga Business`,
+    });
+
+    if (paymentResult.success && paymentResult.redirectUrl) {
+      paymentUrl = paymentResult.redirectUrl;
+      await prisma.payment.update({
+        where: { orderId: order.id },
+        data: { providerTransactionId: paymentResult.paymentId },
+      });
+    }
+  }
+
   // ── 6. Notification vendeur ──
   const { createNotificationInternal } = await import("@/lib/notifications-internal");
   const sellerId = store.sellerProfile?.userId;
@@ -250,5 +272,5 @@ export async function placeStoreOrder(input: {
   revalidatePath("/seller/dashboard");
   revalidatePath("/seller/orders");
 
-  return { orderId: order.id, orderNumber: order.number };
+  return { orderId: order.id, orderNumber: order.number, paymentUrl };
 }
