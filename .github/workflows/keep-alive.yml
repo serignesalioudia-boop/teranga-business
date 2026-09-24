@@ -1,0 +1,16 @@
+name: Keep-alive (évite la pause Supabase)
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  wake:
+    name: Ping du site pour garder la base active
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: curl -sS -o /dev/null -w "HTTP %{http_code}\n" https://teranga-business-olive.vercel.app/api/health
+      - name: Ping page d'accueil
+        run: curl -sS -o /dev/null -w "HTTP %{http_code}\n" https://teranga-business-olive.vercel.app/
