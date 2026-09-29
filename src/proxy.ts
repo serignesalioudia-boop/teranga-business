@@ -1,26 +1,9 @@
 import { decode } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isPublicPath } from "@/lib/public-paths";
 
-const PUBLIC_PATHS = [
-  "/",
-  "/login",
-  "/register",
-  "/shop",
-  "/products",
-  "/categories",
-  "/create-store",
-];
-
-function isPublicPath(pathname: string): boolean {
-  if (PUBLIC_PATHS.includes(pathname)) return true;
-  if (pathname.startsWith("/store/")) return true;
-  if (pathname.startsWith("/category/")) return true;
-  if (pathname.startsWith("/product/")) return true;
-  if (pathname.startsWith("/share/")) return true;
-  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") return true;
-  return false;
-}
+export { isPublicPath };
 
 async function getToken(request: NextRequest) {
   const secret = process.env.NEXTAUTH_SECRET;
