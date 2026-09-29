@@ -65,17 +65,17 @@ describe("cn", () => {
 });
 
 describe("checkRateLimit", () => {
-  it("autorise les premières requêtes", () => {
-    const result = checkRateLimit("test-rl-1", 5, 60_000);
+  it("autorise les premières requêtes", async () => {
+    const result = await checkRateLimit(`test-rl-1-${Date.now()}`, 5, 60_000);
     expect(result.allowed).toBe(true);
   });
 
-  it("bloque après le max", () => {
-    const key = "test-rl-block";
+  it("bloque après le max", async () => {
+    const key = `test-rl-block-${Date.now()}`;
     for (let i = 0; i < 5; i++) {
-      checkRateLimit(key, 5, 60_000);
+      await checkRateLimit(key, 5, 60_000);
     }
-    const result = checkRateLimit(key, 5, 60_000);
+    const result = await checkRateLimit(key, 5, 60_000);
     expect(result.allowed).toBe(false);
     expect(result.remaining).toBe(0);
   });

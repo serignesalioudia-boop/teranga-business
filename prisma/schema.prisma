@@ -438,6 +438,7 @@ model SubOrder {
   commissionAmount BigInt         @default(0)
   payableAmount    BigInt         @default(0)
   shippingAddress  Json?
+  stockRestored    Boolean        @default(false)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
@@ -794,4 +795,16 @@ model ShareEvent {
   @@index([shareLinkId])
   @@index([userId])
   @@index([createdAt])
+}
+
+// ─── Rate limiting persistant ───
+// Un compteur en mémoire est inutilisable en serverless (chaque instance a la
+// sienne et les cold starts la vident) : le compteur vit donc en base.
+model RateLimit {
+  key       String   @id
+  count     Int      @default(0)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
 }

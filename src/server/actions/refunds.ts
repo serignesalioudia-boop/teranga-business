@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { revalidatePath } from "next/cache";
+import { restockSubOrder } from "@/lib/stock";
 
 const refundSchema = z.object({
   subOrderId: z.string().min(1, "Commande requise."),
@@ -113,9 +114,14 @@ export async function processRefund(
   });
 
   if (action === "APPROVED" && refund.subOrderId) {
-    await prisma.subOrder.update({
-      where: { id: refund.subOrderId },
-      data: { status: "CANCELLED" },
+    await prisma.$transaction(async (tx) => {
+      await tx.subOrder.update({
+        where: { id: refund.subOrderId! },
+        data: { status: "CANCELLED" },
+      });
+      // Le remboursement libère le stock réservé (idempotent : si la
+      // sous-commande avait déjà été annulée, rien n'est rejoué).
+      await restockSubOrder(tx, refund.subOrderId!);
     });
   }
 

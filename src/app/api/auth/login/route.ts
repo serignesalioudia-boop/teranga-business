@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, extractIp } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
 import { encode } from "next-auth/jwt";
 
@@ -9,13 +9,28 @@ type AuthError = { ok: false; error: string };
 type AuthOk = { ok: true; token: string };
 type AuthResult = AuthError | AuthOk;
 
-async function authenticate(email: string, password: string): Promise<AuthResult> {
+async function authenticate(
+  email: string,
+  password: string,
+  ip: string,
+): Promise<AuthResult> {
   if (!email || !password) {
     return { ok: false, error: "Email et mot de passe requis." };
   }
 
-  const rl = checkRateLimit(`login:${email.trim().toLowerCase()}`, 5, 60_000);
-  if (!rl.allowed) {
+  // Double limitation : par compte (bloque le ciblage d'un compte précis) et
+  // par IP (bloque le balayage de plusieurs comptes depuis une même machine).
+  const byAccount = await checkRateLimit(
+    `login:account:${email.trim().toLowerCase()}`,
+    5,
+    60_000,
+  );
+  if (!byAccount.allowed) {
+    return { ok: false, error: "Trop de tentatives. Réessayez dans 1 minute." };
+  }
+
+  const byIp = await checkRateLimit(`login:ip:${ip}`, 20, 60_000);
+  if (!byIp.allowed) {
     return { ok: false, error: "Trop de tentatives. Réessayez dans 1 minute." };
   }
 
@@ -115,7 +130,7 @@ export async function POST(request: Request) {
       callbackUrl = String(formData.get("callbackUrl") ?? null);
     }
 
-    const result = await authenticate(email, password);
+    const result = await authenticate(email, password, extractIp(request.headers));
 
     if (!result.ok) {
       if (contentType.includes("application/json")) {

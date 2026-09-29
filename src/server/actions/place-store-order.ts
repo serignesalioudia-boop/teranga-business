@@ -7,6 +7,7 @@ import { clearCart } from "./cart";
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { initPayment } from "@/lib/payments";
+import { reserveStock } from "@/lib/stock";
 import type { Prisma } from "@/generated/prisma/client";
 
 function generateOrderNumber(): string {
@@ -28,7 +29,7 @@ export async function placeStoreOrder(input: {
     throw new Error("Tous les champs sont requis.");
   }
 
-  const rl = checkRateLimit("placeStoreOrder", 3, 60_000);
+  const rl = await checkRateLimit("placeStoreOrder", 3, 60_000);
   if (!rl.allowed) {
     throw new Error("Trop de commandes. Réessayez dans 1 minute.");
   }
@@ -172,13 +173,8 @@ export async function placeStoreOrder(input: {
         },
       });
 
-      await tx.product.update({
-        where: { id: item.product.id },
-        data: {
-          stock: { decrement: item.quantity },
-          soldCount: { increment: item.quantity },
-        },
-      });
+      // Réservation atomique du stock (empêche la survente).
+      await reserveStock(tx, item.product.id, item.quantity);
     }
 
     // PaymentSplit

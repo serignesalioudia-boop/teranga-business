@@ -2,18 +2,29 @@
 
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, extractIp } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
 import { encode } from "next-auth/jwt";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export async function loginAction(email: string, password: string) {
   if (!email || !password) {
     return { error: "Email et mot de passe requis." };
   }
 
-  const rl = checkRateLimit(`login:${email.trim().toLowerCase()}`, 5, 60_000);
-  if (!rl.allowed) {
+  // Double limitation : par compte et par IP.
+  const hdrs = await headers();
+  const byAccount = await checkRateLimit(
+    `login:account:${email.trim().toLowerCase()}`,
+    5,
+    60_000,
+  );
+  if (!byAccount.allowed) {
+    return { error: "Trop de tentatives. Réessayez dans 1 minute." };
+  }
+
+  const byIp = await checkRateLimit(`login:ip:${extractIp(hdrs)}`, 20, 60_000);
+  if (!byIp.allowed) {
     return { error: "Trop de tentatives. Réessayez dans 1 minute." };
   }
 

@@ -11,6 +11,7 @@ import {
   VALID_DELIVERY_TRANSITIONS,
 } from "@/lib/order-status";
 import { logAction } from "@/lib/audit-log-helper";
+import { restockOrder, restockSubOrder } from "@/lib/stock";
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING: "En attente",
@@ -112,17 +113,31 @@ export async function updateOrderStatus(
     );
   }
 
-  await prisma.$transaction([
-    prisma.order.update({ where: { id: orderId }, data: { status: status as never } }),
-    prisma.orderStatusHistory.create({
+  await prisma.$transaction(async (tx) => {
+    await tx.order.update({
+      where: { id: orderId },
+      data: { status: status as never },
+    });
+    await tx.orderStatusHistory.create({
       data: {
         orderId,
         status: status as never,
         note: note ?? `Statut mis à jour : ${status}`,
         changedBy: user.id,
       },
-    }),
-  ]);
+    });
+
+    // Remise en stock si la commande est annulée ou remboursée.
+    if (status === "CANCELLED" || status === "REFUNDED") {
+      const restored = await restockOrder(tx, orderId);
+      if (restored > 0) {
+        await tx.subOrder.updateMany({
+          where: { orderId, status: { notIn: ["CANCELLED", "REFUNDED"] } },
+          data: { status: (status as never) },
+        });
+      }
+    }
+  });
 
   await logAction({
     action: "ORDER_STATUS_CHANGED",
@@ -271,9 +286,16 @@ export async function updateSubOrderStatus(
     throw new Error(`Transition invalide : ${subOrder.status} → ${status}`);
   }
 
-  await prisma.subOrder.update({
-    where: { id: subOrderId },
-    data: { status: status as never },
+  await prisma.$transaction(async (tx) => {
+    await tx.subOrder.update({
+      where: { id: subOrderId },
+      data: { status: status as never },
+    });
+
+    // Un refus ou une annulation libère le stock réservé.
+    if (status === "CANCELLED" || status === "REJECTED") {
+      await restockSubOrder(tx, subOrderId);
+    }
   });
 
   await logAction({

@@ -18,17 +18,26 @@ export async function POST(request: NextRequest) {
       include: { order: true },
     });
 
-    if (!payment) {
-      const paymentByRef = await prisma.payment.findFirst({
-        where: { orderId: payload.reference },
-      });
-      if (!paymentByRef) {
-        return NextResponse.json({ error: "Payment not found" }, { status: 404 });
-      }
-      await updatePaymentStatus(paymentByRef.id, payload.status, payload.transactionId);
-    } else {
-      await updatePaymentStatus(payment.id, payload.status, payload.transactionId);
+    const paymentRecord =
+      payment ??
+      (await prisma.payment.findFirst({ where: { orderId: payload.reference } }));
+
+    if (!paymentRecord) {
+      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
     }
+
+    // Le montant payé doit correspondre au montant attendu : sinon on refuse
+    // de marquer la commande payée (le webhook reste signé, mais incohérent).
+    if (payload.status === "SUCCESS" && payload.amount > 0) {
+      if (BigInt(payload.amount) !== paymentRecord.amount) {
+        return NextResponse.json(
+          { error: "Amount mismatch" },
+          { status: 400 },
+        );
+      }
+    }
+
+    await updatePaymentStatus(paymentRecord.id, payload.status, payload.transactionId);
 
     return NextResponse.json({ received: true });
   } catch {

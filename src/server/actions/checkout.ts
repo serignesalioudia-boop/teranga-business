@@ -6,6 +6,7 @@ import { clearCart } from "./cart";
 import { randomBytes } from "node:crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { initPayment } from "@/lib/payments";
+import { reserveStock } from "@/lib/stock";
 import type { Prisma } from "@/generated/prisma/client";
 
 // ─── Générer numéro de commande unique ───────────────────
@@ -31,7 +32,9 @@ async function computeDeliveryFee(
       ],
       isActive: true,
     },
-    orderBy: [{ scope: "asc" }, { priority: "desc" }],
+    // VENDOR doit être évalué avant GLOBAL : tri descending sur scope
+    // ("VENDOR" > "GLOBAL" alphabétiquement), puis priorité décroissante.
+    orderBy: [{ scope: "desc" }, { priority: "desc" }],
   });
 
   if (!rule) return BigInt(500); // Frais par défaut 500 XOF
@@ -50,7 +53,7 @@ export async function placeOrder(input: {
   guestEmail?: string;
   guestPhone?: string;
 }) {
-  const rl = checkRateLimit("checkout", 5, 60_000);
+  const rl = await checkRateLimit("checkout", 5, 60_000);
   if (!rl.allowed) {
     throw new Error("Trop de commandes. Veuillez patienter 1 minute.");
   }
@@ -214,18 +217,9 @@ export async function placeOrder(input: {
 
       // ── 7. Créer les items + réserver le stock ──
       for (const item of group.items) {
-        const currentProduct = await tx.product.findUnique({
-          where: { id: item.product.id },
-          select: { stock: true, name: true, isDigital: true },
-        });
-        if (!currentProduct) {
-          throw new Error(`Produit introuvable.`);
-        }
-        if (!currentProduct.isDigital && currentProduct.stock < item.quantity) {
-          throw new Error(
-            `Stock insuffisant pour "${currentProduct.name}" (disponible: ${currentProduct.stock}).`,
-          );
-        }
+        // Réservation atomique : le décrément n'a lieu que si le stock est
+        // réellement suffisant, dans la même instruction SQL.
+        await reserveStock(tx, item.product.id, item.quantity);
 
         const price =
           item.product.discountPrice && item.product.discountPrice > 0
@@ -244,22 +238,6 @@ export async function placeOrder(input: {
             lineTotal: price * BigInt(item.quantity),
           },
         });
-
-        // Décrémenter le stock (pas pour les digitaux)
-        if (!item.product.isDigital) {
-          await tx.product.update({
-            where: { id: item.product.id },
-            data: {
-              stock: { decrement: item.quantity },
-              soldCount: { increment: item.quantity },
-            },
-          });
-        } else {
-          await tx.product.update({
-            where: { id: item.product.id },
-            data: { soldCount: { increment: item.quantity } },
-          });
-        }
       }
 
       // ── 8. Créer le PaymentSplit ──

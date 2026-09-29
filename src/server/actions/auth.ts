@@ -36,7 +36,7 @@ export async function register(
   _prevState: RegisterFormState,
   formData: FormData,
 ): Promise<RegisterFormState> {
-  const rl = checkRateLimit("register", 5, 60_000);
+  const rl = await checkRateLimit("register", 5, 60_000);
   if (!rl.allowed) {
     return { errors: { form: ["Trop de tentatives. Réessayez dans 1 minute."] } };
   }

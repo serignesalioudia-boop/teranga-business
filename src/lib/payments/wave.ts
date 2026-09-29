@@ -80,7 +80,13 @@ export function verifyWaveWebhook(
     .createHmac("sha256", WAVE_WEBHOOK_SECRET)
     .update(rawBody)
     .digest("hex");
-  if (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) {
+
+  // timingSafeEqual lève si les deux buffers n'ont pas la même taille :
+  // on compare d'abord les longueurs pour rejeter proprement.
+  const expectedBuf = Buffer.from(expected, "utf8");
+  const signatureBuf = Buffer.from(signature, "utf8");
+  if (expectedBuf.length !== signatureBuf.length) return null;
+  if (!crypto.timingSafeEqual(expectedBuf, signatureBuf)) {
     return null;
   }
 
