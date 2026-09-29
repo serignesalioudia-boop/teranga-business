@@ -15,6 +15,14 @@ const securityHeaders = [
   // Content-Security-Policy : barrière principale contre le XSS.
   // 'unsafe-inline' sur les styles est nécessaire (Next injecte les styles),
   // 'unsafe-eval' est réservé au dev (React refresh).
+  //
+  // Pas de 'upgrade-insecure-requests' : cette directive est appliquée
+  // quelles que soient les conditions et fait passer en https tous les
+  // sous-ressources, y compris same-origin. Sur un site servi en http simple
+  // (aperçu local, accès réseau local), chaque CSS/JS/fonts passe alors en
+  // https et échoue en ERR_SSL_PROTOCOL_ERROR : la page s'affiche sans aucun
+  // style. Sur un hébergeur en https (Vercel) elle n'apportait rien de plus,
+  // le navigateur bloquant déjà le contenu mixte. HSTS ci-dessus suffit.
   {
     key: "Content-Security-Policy",
     value: [
@@ -30,7 +38,6 @@ const securityHeaders = [
       "base-uri 'self'",
       "object-src 'none'",
       "frame-ancestors 'none'",
-      "upgrade-insecure-requests",
     ].join("; "),
   },
 ];
