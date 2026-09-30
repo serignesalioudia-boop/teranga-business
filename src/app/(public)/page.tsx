@@ -32,9 +32,7 @@ export default async function HomePage() {
     name: string;
     slug: string;
     icon: string | null;
-    imageUrl: string | null;
     _count: { products: number };
-    photo: string | null;
   }[] = [];
 
   try {
@@ -45,23 +43,15 @@ export default async function HomePage() {
         _count: {
           select: { products: { where: { status: "PUBLISHED" } } },
         },
-        products: {
-          where: { status: "PUBLISHED" },
-          take: 1,
-          orderBy: { createdAt: "asc" },
-          select: { media: { take: 1, select: { url: true } } },
-        },
       },
     });
 
-    categories = raw.map((cat) => ({
-      id: cat.id,
-      name: cat.name,
-      slug: cat.slug,
-      icon: cat.icon,
-      imageUrl: cat.imageUrl,
-      _count: cat._count,
-      photo: cat.imageUrl ?? cat.products[0]?.media[0]?.url ?? null,
+    categories = raw.map(({ id, name, slug, icon, _count }) => ({
+      id,
+      name,
+      slug,
+      icon,
+      _count,
     }));
 
     // Les categories qui ont des produits d'abord : sinon la section affiche
@@ -213,60 +203,30 @@ export default async function HomePage() {
                 <Link
                   key={cat.id}
                   href={`/category/${cat.slug}`}
-                  className="group relative flex aspect-4/5 sm:aspect-3/4 flex-col justify-end overflow-hidden rounded-2xl border bg-gradient-to-br from-[#c8922d]/10 to-[#c8922d]/5 transition hover:-translate-y-0.5 hover:border-[#c8922d]/40 hover:shadow-lg hover:shadow-[#c8922d]/10"
+                  className="group relative flex aspect-4/5 sm:aspect-3/4 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border bg-gradient-to-br from-[#c8922d]/10 to-[#c8922d]/5 p-3 text-center transition hover:-translate-y-0.5 hover:border-[#c8922d]/40 hover:shadow-lg hover:shadow-[#c8922d]/10"
                 >
-                  {cat.photo ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={cat.photo}
-                        alt=""
-                        loading="lazy"
-                        className="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                      <span
-                        aria-hidden
-                        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
-                      />
-                    </>
-                  ) : (
-                    <span
-                      aria-hidden
-                      className="absolute inset-0 bg-gradient-to-br from-[#c8922d]/15 via-[#c8922d]/5 to-transparent"
-                    />
-                  )}
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 bg-gradient-to-br from-[#c8922d]/15 via-transparent to-transparent transition group-hover:from-[#c8922d]/25"
+                  />
 
                   <span
-                    className={`relative mb-2 ml-2 flex size-9 items-center justify-center rounded-xl text-base transition group-hover:scale-110 sm:size-10 ${
-                      cat.photo
-                        ? "bg-white/20 text-white backdrop-blur-sm"
-                        : "bg-white/70 text-[#c8922d]"
-                    }`}
+                    className="relative flex size-12 items-center justify-center rounded-2xl bg-white/70 text-xl text-[#c8922d] shadow-sm transition group-hover:scale-110 sm:size-14"
                   >
                     <CategoryGlyph
                       slug={cat.slug}
                       icon={cat.icon}
-                      className="size-5 sm:size-6"
+                      className="size-6 sm:size-7"
                     />
                   </span>
 
-                  <div className="relative px-2.5 pb-3">
-                    <p
-                      className={`truncate text-xs font-semibold sm:text-sm ${
-                        cat.photo ? "text-white" : ""
-                      }`}
-                    >
-                      {cat.name}
-                    </p>
-                    <p
-                      className={`mt-0.5 text-[10px] ${
-                        cat.photo ? "text-white/75" : "text-muted-foreground"
-                      }`}
-                    >
-                      {cat._count.products}{" "}
-                      {cat._count.products > 1 ? "produits" : "produit"}
-                    </p>
-                  </div>
+                  <p className="relative line-clamp-2 text-xs font-semibold sm:text-sm">
+                    {cat.name}
+                  </p>
+                  <p className="relative text-[10px] text-muted-foreground">
+                    {cat._count.products}{" "}
+                    {cat._count.products > 1 ? "produits" : "produit"}
+                  </p>
                 </Link>
               ))}
             </div>
