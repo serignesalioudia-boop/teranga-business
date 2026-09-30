@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCategories } from "@/server/actions/categories";
+import { CategoryGlyph } from "@/lib/category-visual";
 
 
 export const dynamic = "force-dynamic";
@@ -29,7 +30,9 @@ export default async function CategoriesPage() {
                 className="h-20 w-20 rounded-full object-cover"
               />
             ) : (
-              <span className="text-3xl">{cat.icon || "📂"}</span>
+              <span className="flex size-20 items-center justify-center rounded-full bg-[#c8922d]/10 text-3xl text-[#c8922d]">
+                <CategoryGlyph slug={cat.slug} icon={cat.icon} />
+              </span>
             )}
             <span className="font-medium group-hover:text-primary">{cat.name}</span>
             {cat.description && (
@@ -38,7 +41,8 @@ export default async function CategoriesPage() {
               </span>
             )}
             <span className="text-xs text-muted-foreground">
-              {cat._count.products} produits
+              {cat._count.products}{" "}
+              {cat._count.products > 1 ? "produits" : "produit"}
               {cat._count.children > 0 &&
                 ` · ${cat._count.children} sous-catégories`}
             </span>
