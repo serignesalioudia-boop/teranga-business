@@ -3,9 +3,6 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { getSellerStore } from "@/server/actions/seller-store";
 import { StoreSettingsForm } from "@/components/seller/store-settings-form";
-import { SellerPlanCard } from "@/components/seller/seller-plan-card";
-import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/session";
 import { ExternalLink } from "lucide-react";
 import { CopyUrlButton } from "@/components/seller/copy-url-button";
 
@@ -21,21 +18,6 @@ export default async function SellerSettingsPage() {
   } catch {
     return (<div className="flex min-h-[50vh] items-center justify-center"><p className="text-muted-foreground">Chargement…</p></div>);
   }
-  const user = await getCurrentUser();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let sellerProfile: any = null;
-  if (user) {
-    try {
-      sellerProfile = await prisma.sellerProfile.findUnique({
-        where: { userId: user.id },
-        select: { plan: true, planExpiresAt: true },
-      });
-    } catch (e) {
-      console.error("[SellerSettings] DB error:", e);
-    }
-  }
-
   const storeUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/store/${store.slug}`;
 
   return (
@@ -62,16 +44,6 @@ export default async function SellerSettingsPage() {
           <CopyUrlButton url={storeUrl} />
         </div>
       </div>
-
-      {sellerProfile && (
-        <section className="rounded-xl border bg-card p-6">
-          <SellerPlanCard
-            currentPlan={sellerProfile.plan}
-            planExpiresAt={sellerProfile.planExpiresAt}
-            storeId={store.id}
-          />
-        </section>
-      )}
 
       <section className="rounded-xl border bg-card p-6">
         <StoreSettingsForm store={store} />

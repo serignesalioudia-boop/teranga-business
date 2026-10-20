@@ -126,7 +126,19 @@ export async function checkDigitalProductAllowed(storeId: string) {
   };
 }
 
+// Les abonnements payants ne sont pas commercialises : aucune passerelle de
+// paiement n'est branchee (cles Wave / Orange Money absentes). La fonction est
+// conservee pour la version 10 mais refuse tout changement de plan, y compris
+// par appel direct a l'action serveur. Toutes les boutiques restent en FREE.
 export async function upgradeSellerPlan(plan: SellerPlan, paymentReference?: string) {
+  void plan;
+  void paymentReference;
+  throw new Error(
+    "Les abonnements vendeurs ne sont pas encore disponibles. Toutes les boutiques sont en formule gratuite.",
+  );
+}
+
+async function upgradeSellerPlanV10(plan: SellerPlan, paymentReference?: string) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Non autorisé.");
 

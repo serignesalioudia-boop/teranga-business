@@ -7,7 +7,7 @@ import { serialize } from "@/lib/serialize";
 type Props = { searchParams: Promise<{ status?: string; search?: string; page?: string }> };
 
 
-export const metadata = { title: "Commandes — Admin — Teranga Business" };
+export const metadata = { title: "Commandes — Admin" };
 
 export default async function AdminOrdersPage({ searchParams }: Props) {
   const params = await searchParams;

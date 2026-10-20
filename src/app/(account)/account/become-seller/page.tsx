@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle } from "lucide-react";
 
 
-export const metadata = { title: "Devenir vendeur — Teranga Business" };
+export const metadata = { title: "Devenir vendeur" };
 
 const STATUS_CONFIG = {
   REJECTED: {

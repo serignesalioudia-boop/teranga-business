@@ -8,7 +8,7 @@ import { formatDistanceToNow } from "@/lib/utils";
 import { DeleteReviewButton } from "./_components/delete-button";
 
 
-export const metadata = { title: "Mes avis — Teranga Business" };
+export const metadata = { title: "Mes avis" };
 
 export default async function AccountReviewsPage() {
   const reviews = await getUserReviews();

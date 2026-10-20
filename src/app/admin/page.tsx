@@ -13,7 +13,7 @@ import { TopProductsChart } from "./_components/top-products-chart";
 import { OrdersByDayChart } from "./_components/orders-by-day-chart";
 
 
-export const metadata = { title: "Tableau de bord — Admin — Teranga Business" };
+export const metadata = { title: "Tableau de bord — Admin" };
 
 export default async function AdminDashboardPage() {
   const user = await getCurrentUser();

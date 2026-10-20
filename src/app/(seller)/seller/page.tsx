@@ -9,7 +9,7 @@ import { getSellerStore, getSellerStats } from "@/server/actions/seller-stats";
 import { prisma } from "@/lib/prisma";
 
 
-export const metadata = { title: "Dashboard vendeur — Teranga Business" };
+export const metadata = { title: "Dashboard vendeur" };
 
 export default async function SellerDashboardPage() {
   let store;

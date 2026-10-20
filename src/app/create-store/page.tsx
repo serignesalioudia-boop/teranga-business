@@ -16,7 +16,7 @@ import {
 import { Logo } from "@/components/layout/logo";
 
 export const metadata = {
-  title: "Créez votre boutique en ligne — Teranga Business",
+  title: "Créez votre boutique en ligne",
   description:
     "Lancez votre e-commerce au Sénégal en quelques minutes. Gestion des produits, paiements, livraisons, tout est inclus.",
 };

@@ -17,7 +17,7 @@ import {
 import { DeleteButton } from "@/components/admin/delete-button";
 
 
-export const metadata = { title: "Mes produits — Vendeur — Teranga Business" };
+export const metadata = { title: "Mes produits — Vendeur" };
 
 const statusLabels: Record<string, string> = {
   DRAFT: "Brouillon",

@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 
 
 export const metadata = {
-  title: "Mon profil — Teranga Business",
+  title: "Mon profil",
 };
 
 export default async function ProfilePage() {

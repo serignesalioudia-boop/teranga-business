@@ -7,7 +7,7 @@ import { Heart } from "lucide-react";
 
 
 export const metadata = {
-  title: "Mes favoris — Teranga Business",
+  title: "Mes favoris",
 };
 
 export default async function FavoritesPage() {

@@ -6,7 +6,7 @@ import { CategoryGlyph } from "@/lib/category-visual";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Catégories — Teranga Business",
+  title: "Catégories",
   description: "Explorez toutes les catégories de produits disponibles.",
 };
 

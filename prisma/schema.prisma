@@ -207,6 +207,8 @@ model Store {
   logoUrl         String?
   bannerUrl       String?
   whatsapp        String?
+  contactEmail    String?
+  contactPhone    String?
   qrCodeUrl       String?
   qrWaveUrl       String?
   qrOrangeMoneyUrl String?

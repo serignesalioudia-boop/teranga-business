@@ -19,7 +19,8 @@ type Props = {
   params: Promise<{ slug: string }>;
   searchParams?: Promise<{ from?: string; store?: string }>;
 };
-
+
+
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/product/${product.slug}`;
 
   return {
-    title: `${product.name} — Teranga Business`,
+    title: `${product.name}`,
     description: product.description?.slice(0, 160) ?? `${product.name} disponible sur Teranga Business`,
     openGraph: {
       title: product.name,

@@ -10,7 +10,7 @@ import { serialize } from "@/lib/serialize";
 
 
 export const metadata = {
-  title: "Panier — Teranga Business",
+  title: "Panier",
 };
 
 export default async function CartPage() {

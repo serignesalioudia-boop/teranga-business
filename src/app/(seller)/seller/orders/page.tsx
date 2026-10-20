@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { SUBORDER_STATUS_LABELS, SUBORDER_STATUS_COLORS } from "@/lib/order-status";
 
 
-export const metadata = { title: "Commandes vendeur — Teranga Business" };
+export const metadata = { title: "Commandes vendeur" };
 
 export default async function SellerOrdersPage() {
   const user = await getCurrentUser();

@@ -31,6 +31,7 @@ export async function getStoreBySlug(slug: string) {
       },
       _count: { select: { products: true } },
       socialLinks: true,
+      deliveryRules: { where: { isActive: true }, orderBy: { priority: "asc" } },
     },
   });
 

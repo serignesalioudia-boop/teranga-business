@@ -6,7 +6,7 @@ import { SellerSidebar } from "@/components/seller/seller-sidebar";
 import { Button } from "@/components/ui/button";
 import { Store } from "lucide-react";
 
-export const metadata = { title: "Vendeur — Teranga Business" };
+export const metadata = { title: "Vendeur" };
 
 export default async function SellerLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();

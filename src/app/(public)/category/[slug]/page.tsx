@@ -18,7 +18,8 @@ type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
-
+
+
 
 export async function generateMetadata({ params }: Pick<Props, "params">): Promise<Metadata> {
   const { slug } = await params;
@@ -28,10 +29,10 @@ export async function generateMetadata({ params }: Pick<Props, "params">): Promi
   const url = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/category/${category.slug}`;
 
   return {
-    title: `${category.name} — Teranga Business`,
+    title: `${category.name}`,
     description: category.description ?? `Produits dans la catégorie ${category.name}`,
     openGraph: {
-      title: `${category.name} — Teranga Business`,
+      title: `${category.name}`,
       description: category.description ?? `Découvrez les produits ${category.name} sur Teranga Business`,
       url,
       siteName: "Teranga Business",
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: Pick<Props, "params">): Promi
     },
     twitter: {
       card: "summary_large_image",
-      title: `${category.name} — Teranga Business`,
+      title: `${category.name}`,
       description: category.description ?? `Découvrez les produits ${category.name} sur Teranga Business`,
       images: category.imageUrl ? [category.imageUrl] : [],
     },

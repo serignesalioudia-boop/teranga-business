@@ -14,7 +14,6 @@ import {
   Home,
   ShoppingBag,
   Truck,
-  ArrowLeft,
 } from "lucide-react";
 import { ProductCard } from "@/components/product/product-card";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
@@ -66,66 +65,42 @@ export function VendeurTheme({
       <header className="sticky top-0 z-50 border-b border-[rgba(200,146,45,0.35)]" style={{ backgroundColor: S.secondary }}>
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3">
           <div className="flex min-w-0 items-center gap-1 sm:gap-2">
-            <Link
-              href="/"
-              className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 sm:px-2 py-1 text-xs sm:text-sm font-medium text-white/90 transition hover:bg-white/15 hover:text-white"
-              title="Retour au site"
-            >
-              <ArrowLeft className="size-3.5 sm:size-4" />
-              <span className="hidden sm:inline">Site</span>
-            </Link>
             <Link href={`/store/${storeSlug}`} className="flex items-center gap-2 sm:gap-3 text-white no-underline">
-            {store.logoUrl ? (
-              <img
-                src={store.logoUrl}
-                alt={store.name}
-                className="h-9 w-9 sm:h-[52px] sm:w-[52px] rounded-full border-2 bg-white object-cover shadow-lg"
-                style={{ borderColor: S.primary }}
-              />
-            ) : (
-              <div
-                className="flex h-9 w-9 sm:h-[52px] sm:w-[52px] items-center justify-center rounded-full border-2 bg-white text-lg sm:text-2xl shadow-lg"
-                style={{ borderColor: S.primary }}
-              >
-                🏪
-              </div>
-            )}
-            <span className="text-sm sm:text-[1.25rem] font-bold truncate max-w-[140px] sm:max-w-none">
-              {store.name}
-            </span>
-          </Link>
+              {store.logoUrl ? (
+                <img
+                  src={store.logoUrl}
+                  alt={store.name}
+                  className="h-9 w-9 sm:h-[52px] sm:w-[52px] rounded-full border-2 bg-white object-cover shadow-lg"
+                  style={{ borderColor: S.primary }}
+                />
+              ) : (
+                <div
+                  className="flex h-9 w-9 sm:h-[52px] sm:w-[52px] items-center justify-center rounded-full border-2 bg-white text-lg sm:text-2xl shadow-lg"
+                  style={{ borderColor: S.primary }}
+                >
+                  🏪
+                </div>
+              )}
+              <span className="text-sm sm:text-[1.25rem] font-bold truncate max-w-[140px] sm:max-w-none">
+                {store.name}
+              </span>
+            </Link>
           </div>
 
           <nav className="hidden items-center gap-3 sm:gap-5 md:flex">
-            <Link
-              href={`/store/${storeSlug}`}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition"
-              style={{ ["--hover-bg" as string]: S.primary }}
-            >
+            <Link href={`/store/${storeSlug}`} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10">
               <Home className="size-4" /> Accueil
             </Link>
-            <Link
-              href={`/store/${storeSlug}/products`}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition"
-            >
+            <Link href={`/store/${storeSlug}/products`} className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10">
               <Package className="size-4" /> Produits
             </Link>
-            <Link
-              href={`/store/${storeSlug}/cart`}
-              className="relative flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition"
-            >
+            <Link href={`/store/${storeSlug}/cart`} className="relative flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10">
               <ShoppingCart className="size-4" /> Panier
               <CartBadge />
             </Link>
           </nav>
 
           <div className="flex items-center gap-2 md:hidden">
-            <Link
-              href={`/store/${storeSlug}/cart`}
-              className="relative flex items-center text-white"
-            >
-              <ShoppingCart className="size-5" /> <CartBadge />
-            </Link>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="text-xl sm:text-2xl text-white"
@@ -138,27 +113,14 @@ export function VendeurTheme({
         {mobileOpen && (
           <div className="border-t border-white/10 px-5 py-4 md:hidden" style={{ backgroundColor: S.secondary }}>
             <nav className="flex flex-col gap-3">
-              <Link
-                href={`/store/${storeSlug}`}
-                className="flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-white transition"
-                onClick={() => setMobileOpen(false)}
-              >
+              <Link href={`/store/${storeSlug}`} className="flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-white transition hover:bg-white/10" onClick={() => setMobileOpen(false)}>
                 <Home className="size-4" /> Accueil
               </Link>
-              <Link
-                href={`/store/${storeSlug}/products`}
-                className="flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-white transition"
-                onClick={() => setMobileOpen(false)}
-              >
+              <Link href={`/store/${storeSlug}/products`} className="flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-white transition hover:bg-white/10" onClick={() => setMobileOpen(false)}>
                 <Package className="size-4" /> Produits
               </Link>
-              <Link
-                href={`/store/${storeSlug}/cart`}
-                className="relative flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-white transition"
-                onClick={() => setMobileOpen(false)}
-              >
-                <ShoppingCart className="size-4" /> Panier
-                <CartBadge />
+              <Link href={`/store/${storeSlug}/cart`} className="relative flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-white transition hover:bg-white/10" onClick={() => setMobileOpen(false)}>
+                <ShoppingCart className="size-4" /> Panier <CartBadge />
               </Link>
             </nav>
           </div>
@@ -480,9 +442,6 @@ export function VendeurTheme({
           <div className="border-t border-white/20 pt-4 sm:pt-5 text-center text-xs sm:text-sm opacity-70">
             <p>
               &copy; 2026 {store.name}. Tous droits réservés. Propulsé par{" "}
-              <Link href="/" className="font-bold no-underline" style={{ color: S.primary }}>
-                Teranga Business
-              </Link>
             </p>
           </div>
         </div>

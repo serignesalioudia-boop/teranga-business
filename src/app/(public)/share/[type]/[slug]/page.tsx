@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = await getProductBySlug(slug);
     if (!product) return { title: "Produit introuvable" };
     return {
-      title: `Partager ${product.name} — Teranga Business`,
+      title: `Partager ${product.name}`,
       description: product.description?.slice(0, 160) ?? `Partagez ${product.name}`,
     };
   }
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const store = await getStoreBySlug(slug);
     if (!store) return { title: "Boutique introuvable" };
     return {
-      title: `Partager ${store.name} — Teranga Business`,
+      title: `Partager ${store.name}`,
       description: store.description ?? `Partagez la boutique ${store.name}`,
     };
   }
@@ -37,12 +37,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const category = await getCategoryBySlug(slug);
     if (!category) return { title: "Catégorie introuvable" };
     return {
-      title: `Partager ${category.name} — Teranga Business`,
+      title: `Partager ${category.name}`,
       description: category.description ?? `Partagez la catégorie ${category.name}`,
     };
   }
 
-  return { title: "Partager — Teranga Business" };
+  return { title: "Partager" };
 }
 
 export default async function ShareRoute({ params }: Props) {

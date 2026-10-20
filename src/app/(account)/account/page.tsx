@@ -10,7 +10,7 @@ import { Store, Clock, CheckCircle, XCircle, MapPin, Bell, Star, Heart, User } f
 
 
 export const metadata = {
-  title: "Mon compte — Teranga Business",
+  title: "Mon compte",
 };
 
 const SELLER_STATUS_LABELS: Record<string, { label: string; icon: typeof Clock; variant: "default" | "secondary" | "destructive" | "outline" }> = {

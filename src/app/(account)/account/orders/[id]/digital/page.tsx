@@ -19,7 +19,7 @@ function formatFileSize(bytes: number | null): string | null {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  return { title: `Produits digitaux — Commande ${id.slice(0, 8)}... — Teranga Business` };
+  return { title: `Produits digitaux — Commande ${id.slice(0, 8)}...` };
 }
 
 export default async function DigitalDownloadPage({ params }: Props) {

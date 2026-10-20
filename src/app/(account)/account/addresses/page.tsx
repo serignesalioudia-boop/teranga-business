@@ -5,7 +5,7 @@ import { AddressesClient } from "./addresses-client";
 
 
 export const metadata = {
-  title: "Mes adresses — Teranga Business",
+  title: "Mes adresses",
 };
 
 export default async function AddressesPage() {

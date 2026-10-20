@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const image = store.logoUrl ?? store.bannerUrl ?? undefined;
 
   return {
-    title: `${store.name} — Teranga Business`,
+    title: store.name,
     description: store.description ?? `Boutique ${store.name} sur Teranga Business`,
     openGraph: {
       title: store.name,
@@ -120,6 +120,11 @@ export default async function StorePage({ params, searchParams }: Props) {
           logoUrl: store.logoUrl,
           bannerUrl: store.bannerUrl,
           whatsapp: store.whatsapp,
+          contactEmail: store.contactEmail,
+          contactPhone: store.contactPhone,
+          qrWaveUrl: store.qrWaveUrl,
+          qrOrangeMoneyUrl: store.qrOrangeMoneyUrl,
+          shippingPolicy: store.shippingPolicy,
           ratingAvg: Number(store.ratingAvg),
           ratingCount: store.ratingCount,
           isVerified: store.sellerProfile?.isVerified ?? false,
@@ -139,6 +144,13 @@ export default async function StorePage({ params, searchParams }: Props) {
         currentSearch={search}
         currentSort={sort}
         storeTheme={storeThemeConfig}
+        socialLinks={store.socialLinks.map((l) => ({ platform: l.platform, url: l.url }))}
+        deliveryRules={store.deliveryRules.map((r) => ({
+          zone: r.zone,
+          method: r.method,
+          fee: Number(r.fee),
+          freeAbove: r.freeAbove === null ? null : Number(r.freeAbove),
+        }))}
       />
     </>
   );

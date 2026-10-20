@@ -11,7 +11,7 @@ type OrderWithSubOrders = Awaited<ReturnType<typeof getUserOrders>>[number];
 
 
 export const metadata = {
-  title: "Mes commandes — Teranga Business",
+  title: "Mes commandes",
 };
 
 export default async function OrdersPage() {

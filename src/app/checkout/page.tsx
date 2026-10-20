@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 
 
 export const metadata = {
-  title: "Checkout — Teranga Business",
+  title: "Checkout",
 };
 
 export default async function CheckoutPage() {

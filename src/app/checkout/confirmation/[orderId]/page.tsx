@@ -19,7 +19,7 @@ type ShippingAddress = {
 
 export async function generateMetadata({ params }: Props) {
   const { orderId } = await params;
-  return { title: `Commande ${orderId.slice(0, 8)}... — Teranga Business` };
+  return { title: `Commande ${orderId.slice(0, 8)}...` };
 }
 
 export default async function ConfirmationPage({ params }: Props) {

@@ -6,13 +6,14 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { getSellerStore } from "@/server/actions/seller-store";
 import { StoreSettingsForm } from "@/components/seller/store-settings-form";
-import { SellerPlanCard } from "@/components/seller/seller-plan-card";
+import { StoreContactSettings } from "@/components/seller/store-contact-settings";
+import { getStoreContactSettings } from "@/server/actions/store-contact";
 import { CopyUrlButton } from "@/components/seller/copy-url-button";
 import { ExternalLink, Eye, Settings } from "lucide-react";
 
 
 export const metadata = {
-  title: "Ma Boutique — Teranga Business",
+  title: "Ma Boutique",
 };
 
 export default async function ShopPage() {
@@ -48,6 +49,7 @@ export default async function ShopPage() {
   }
 
   const store = await getSellerStore();
+  const contactSettings = await getStoreContactSettings(store.id);
   const storeUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/store/${store.slug}`;
 
   return (
@@ -101,17 +103,6 @@ export default async function ShopPage() {
         </div>
       </section>
 
-      {/* Plan vendeur */}
-      {profile && (
-        <section className="rounded-xl border bg-card p-6">
-          <SellerPlanCard
-            currentPlan={profile.plan}
-            planExpiresAt={profile.planExpiresAt}
-            storeId={store.id}
-          />
-        </section>
-      )}
-
       {/* Réglages */}
       <section className="rounded-xl border bg-card p-6">
         <div className="mb-4 flex items-center gap-2">
@@ -120,6 +111,9 @@ export default async function ShopPage() {
         </div>
         <StoreSettingsForm store={store} />
       </section>
+
+      {/* Contact / Reseaux sociaux / Paiements & Livraison */}
+      <StoreContactSettings initial={contactSettings} />
     </div>
   );
 }

@@ -18,7 +18,7 @@ import { CategoryGlyph } from "@/lib/category-visual";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Accueil — Teranga Business",
+  title: "Accueil",
   description:
     "Découvrez les meilleurs produits des vendeurs sénégalais sur Teranga Business.",
 };

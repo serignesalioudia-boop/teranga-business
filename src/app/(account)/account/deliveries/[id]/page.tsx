@@ -6,9 +6,10 @@ import { formatPrice } from "@/lib/format";
 import { DeliveryTimeline } from "@/components/delivery/delivery-timeline";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-
 
-export const metadata = { title: "Suivi livraison — Teranga Business" };
+
+
+export const metadata = { title: "Suivi livraison" };
 
 export default async function DeliveryTrackingPage({
   params,

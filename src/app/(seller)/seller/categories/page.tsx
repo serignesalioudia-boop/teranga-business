@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getSellerCategories } from "@/server/actions/categories";
 import { Package } from "lucide-react";
 
-export const metadata = { title: "Mes catégories — Vendeur — Teranga Business" };
+export const metadata = { title: "Mes catégories — Vendeur" };
 
 export default async function SellerCategoriesPage() {
   let categories;

@@ -18,11 +18,12 @@ type ShippingAddress = {
   city: string;
   region: string;
 };
-
+
+
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  return { title: `Commande ${id.slice(0, 8)}... — Admin — Teranga Business` };
+  return { title: `Commande ${id.slice(0, 8)}... — Admin` };
 }
 
 export default async function AdminOrderDetailPage({ params }: Props) {

@@ -6,7 +6,7 @@ import { MarkAllReadButton } from "./_components/mark-all-read";
 import { MarkReadButton } from "./_components/mark-read";
 
 
-export const metadata = { title: "Notifications — Teranga Business" };
+export const metadata = { title: "Notifications" };
 
 const TYPE_ICONS: Record<string, string> = {
   ORDER: "📦",

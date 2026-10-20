@@ -5,7 +5,7 @@ import { DELIVERY_STATUS_LABELS, DELIVERY_STATUS_COLORS } from "@/lib/order-stat
 import { formatPrice } from "@/lib/format";
 import Link from "next/link";
 
-export const metadata = { title: "Livraisons — Admin — Teranga Business" };
+export const metadata = { title: "Livraisons — Admin" };
 
 export default async function AdminDeliveriesPage({
   searchParams,

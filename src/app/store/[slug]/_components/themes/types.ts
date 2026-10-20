@@ -20,6 +20,18 @@ export type ThemeCategory = {
   count: number;
 };
 
+export type ThemeSocialLink = {
+  platform: string;
+  url: string;
+};
+
+export type ThemeDeliveryRule = {
+  zone: string | null;
+  method: string;
+  fee: number | string | bigint;
+  freeAbove: number | string | bigint | null;
+};
+
 export type ThemeStore = {
   name: string;
   slug: string;
@@ -27,6 +39,11 @@ export type ThemeStore = {
   logoUrl: string | null;
   bannerUrl: string | null;
   whatsapp: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  qrWaveUrl?: string | null;
+  qrOrangeMoneyUrl?: string | null;
+  shippingPolicy?: string | null;
   ratingAvg: number;
   ratingCount: number;
   isVerified: boolean;
@@ -44,4 +61,6 @@ export type ThemeProps = {
   currentSearch?: string;
   currentSort?: string;
   storeTheme?: StoreThemeConfig | null;
+  socialLinks?: ThemeSocialLink[];
+  deliveryRules?: ThemeDeliveryRule[];
 };

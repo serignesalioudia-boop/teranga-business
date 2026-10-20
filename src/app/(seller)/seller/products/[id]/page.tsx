@@ -7,12 +7,13 @@ import { getSellerStore } from "@/server/actions/seller-stats";
 import { ProductForm } from "@/components/product/product-form";
 
 type Props = { params: Promise<{ id: string }> };
-
+
+
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const product = await getProductById(id);
-  return { title: `Modifier « ${product?.name ?? id} » — Vendeur — Teranga Business` };
+  return { title: `Modifier « ${product?.name ?? id} » — Vendeur` };
 }
 
 export default async function SellerEditProductPage({ params }: Props) {

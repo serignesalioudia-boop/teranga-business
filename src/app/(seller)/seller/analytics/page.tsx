@@ -10,7 +10,7 @@ import { SellerTopProductsChart } from "./_components/seller-top-products-chart"
 import { SellerMonthlyRevenueChart } from "./_components/seller-monthly-revenue-chart";
 
 
-export const metadata = { title: "Analytics — Vendeur — Teranga Business" };
+export const metadata = { title: "Analytics — Vendeur" };
 
 export default async function SellerAnalyticsPage() {
   let store;

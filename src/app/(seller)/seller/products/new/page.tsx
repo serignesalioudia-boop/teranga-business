@@ -5,7 +5,7 @@ import { getSellerStore } from "@/server/actions/seller-stats";
 import { ProductForm } from "@/components/product/product-form";
 
 
-export const metadata = { title: "Nouveau produit — Vendeur — Teranga Business" };
+export const metadata = { title: "Nouveau produit — Vendeur" };
 
 export default async function SellerNewProductPage() {
   let store;

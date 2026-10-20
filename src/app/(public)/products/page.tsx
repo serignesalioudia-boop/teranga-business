@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 
 
 export const metadata: Metadata = {
-  title: "Produits — Teranga Business",
+  title: "Produits",
   description: "Tous les produits disponibles sur Teranga Business.",
 };
 

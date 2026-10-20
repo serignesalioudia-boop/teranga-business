@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 
 
-export const metadata = { title: "Revenus — Vendeur — Teranga Business" };
+export const metadata = { title: "Revenus — Vendeur" };
 
 export default async function SellerRevenuePage() {
   let store;

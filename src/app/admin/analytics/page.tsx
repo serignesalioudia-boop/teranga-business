@@ -10,7 +10,7 @@ import { TopStoresChart } from "./_components/top-stores-chart";
 import { UsersTrendChart } from "./_components/users-trend-chart";
 
 
-export const metadata = { title: "Analytics — Admin — Teranga Business" };
+export const metadata = { title: "Analytics — Admin" };
 
 export default async function AdminAnalyticsPage() {
   const data = await getAdminAnalytics();
